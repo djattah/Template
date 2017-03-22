@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/statusView"
+        android:layout_width="10dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/item_task_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:contentDescription="@string/content_des"
+        android:paddingBottom="@dimen/half_default_margin"
+        android:paddingEnd="@dimen/default_margin"
+        android:paddingLeft="@dimen/default_margin"
+        android:paddingRight="@dimen/default_margin"
+        android:paddingTop="@dimen/default_margin"
+        app:layout_constraintLeft_toRightOf="@+id/statusView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_assignment_late_white_48dp" />
+
+    <TextView
+        android:id="@+id/descriptions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintLeft_toRightOf="@+id/item_task_icon"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/item_task_icon"
+        android:maxLines="5"
+        tools:text="TextView TextView TextView TextView TextView " />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/colorGreen"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:layout_marginStart="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/descriptions"
+        app:layout_constraintTop_toTopOf="@+id/type"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="TextView" />
+
+    <TextView
+        android:id="@+id/type"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/item_task_icon"
+        app:layout_constraintLeft_toLeftOf="@+id/item_task_icon"
+        app:layout_constraintRight_toRightOf="@+id/item_task_icon"
+        app:layout_constraintTop_toBottomOf="@+id/item_task_icon"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:lines="1"
+        tools:text="Перемещение из зоны сборки в машину" />
+</android.support.constraint.ConstraintLayout>

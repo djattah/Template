@@ -1,0 +1,61 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:baselineAligned="false"
+    android:divider="?android:attr/dividerHorizontal"
+    android:orientation="horizontal"
+    android:showDividers="middle"
+    tools:context="com.l24o.vyatich.modules.dummy.ItemListActivity">
+
+    <FrameLayout
+        android:layout_width="400dp"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="@dimen/half_default_margin"
+                android:scrollbars="vertical"
+                android:splitMotionEvents="false" />
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            tools:ignore="UnusedAttribute" />
+
+        <TextView
+            android:id="@+id/emptyMessageTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/double_default_margin"
+            android:layout_marginRight="@dimen/double_default_margin"
+            android:gravity="center"
+            android:text="@string/default_empty_list_message_text"
+            android:textSize="@dimen/google_subhead_text_size"
+            android:visibility="invisible" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/taskDetailContainer"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3" />
+</LinearLayout>

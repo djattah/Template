@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Vyatich</string>
+    <string name="ok">OK</string>
+    <string name="default_empty_list_message_text" />
+    <string name="sigin_in_button_text">Войти</string>
+    <string name="sign_in_login_hint">Логин</string>
+    <string name="sign_in_password_hint">Пароль</string>
+    <string name="sign_in_forgot_password_text">Забыли пароль?</string>
+    <string name="pls_wait">Загрузка данных</string>
+    <string name="task_list_empty_message">Задач нет.</string>
+    <string name="content_des">image</string>
+    <string name="task_type">Тип задачи</string>
+    <string name="expedition_type">Экспедиция</string>
+    <string name="task_descriptions">Описание задачи</string>
+    <string name="task_take">Взять в работу</string>
+    <string name="task_cancel">Отменить выполнение</string>
+    <string name="task_done">Завершить работу</string>
+    <!--<string name="task_finish">Утилизация</string>-->
+    <!--<string name="task_delivery">Доставка</string>-->
+    <!--<string name="task_transfer">Перевоз</string>-->
+    <string name="new_tasks">Новые задачи</string>
+    <string name="my_tasks">Мои задачи</string>
+    <string name="task_status_new">Новая</string>
+    <string name="task_status_in_progress">В процессе</string>
+    <string name="task_status_done">Выполнена</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="logout_title">Выход</string>
+    <string name="logout_ok">да</string>
+    <string name="logout_no">нет</string>
+    <string name="logout_content">Вы уверены что хотите выйти?</string>
+    <string name="show_all_my_tasks">Показать все мои задачи</string>
+    <string name="not_chose">Не выбран</string>
+    <string name="not_chose_second">Не выбрана</string>
+    <string name="choose_type">Выберите тип</string>
+    <string name="clear">Очистить</string>
+</resources>
