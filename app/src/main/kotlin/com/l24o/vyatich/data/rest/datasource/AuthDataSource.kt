@@ -1,15 +1,16 @@
 package com.l24o.vyatich.data.rest.datasource
 
 import okhttp3.ResponseBody
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
+import retrofit2.http.*
 import rx.Observable
 
 
 interface AuthDataSource {
 
-    @FormUrlEncoded
-    @POST("login/login")
-    fun authenticate(@FieldMap params: Map<String, String>): Observable<ResponseBody>
+    // new
+    @GET("login/login")
+    fun authenticate(@Field("user_id") user_id: String): Observable<ResponseBody>
+
+    @GET("login/logout")
+    fun logout(): Observable<ResponseBody>
 }

@@ -7,6 +7,7 @@ import rx.Observable
 
 /**
  * @author Alexander Popov on 11/01/2017.
+ * Сохранение в локальной бд - Realm db
  */
 class RealmRepository(private val realm: Realm) : Repository() {
 
@@ -164,26 +165,27 @@ class RealmRepository(private val realm: Realm) : Repository() {
                 val list = tasks.map {
                     task ->
                     val products = task.products?.map {
-                        productForTake ->
-                        it.copyToRealm(RealmProductForTake(
-                                product = it.where(RealmProduct::class.java)
-                                        .equalTo("id", productForTake.productId)
-                                        .findFirst(),
-                                count = productForTake.count
+                        product ->
+                        it.copyToRealm(RealmProduct(
+                                id_n = product.id_n,
+                                prod = product.prod,
+                                prod_s = product.prod_s,
+                                pranu = product.pranu,
+                                pranu_s = product.pranu_s,
+                                pranu2 = product.pranu2,
+                                pranu2_s = product.pranu2_s,
+                                kolvo_m = product.kolvo_m,
+                                kolvo_ot = product.kolvo_ot
                         ))
                     }
                     val realmTask = RealmTask(
-                            id = task.id,
-                            description = task.description,
-                            type = it.where(RealmTaskType::class.java)
-                                    .equalTo("id", task.typeId)
-                                    .findFirst(),
-                            expedition = it.where(RealmExpedition::class.java)
-                                    .equalTo("id", task.expeditionId)
-                                    .findFirst(),
-                            startDate = task.startDate,
-                            endDate = task.endDate,
-                            userId = task.userId
+                            user_id = task.user_id,
+                            user_name = task.user_name,
+                            document_id = task.document_id,
+                            expidition = task.expidition,
+                            type = task.type,
+                            driver = task.driver,
+                            car = task.car
                     )
                     if (products != null) {
                         realmTask.products.addAll(products)

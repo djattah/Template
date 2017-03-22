@@ -7,14 +7,9 @@ import rx.Observable
 
 class AuthRepository(private val authDataSource: AuthDataSource) : Repository() {
 
-    fun authenticate(login: String, password: String): Observable<ResponseBody> {
+    fun authenticate(user_id: String): Observable<ResponseBody> {
         return authDataSource
-                .authenticate(
-                        mapOf(
-                                "phone" to login,
-                                "password" to password
-                        )
-                )
+                .authenticate(user_id)
                 .compose(this.applySchedulers<ResponseBody>())
     }
 }

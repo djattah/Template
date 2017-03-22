@@ -73,7 +73,9 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
 
     private fun authenticate(login: String, password: String) {
         view?.setLoadingVisible(true)
-        subscriptions += authRepo.authenticate(login, password)
+
+        // выпилил password, тк его нет в бд
+        subscriptions += authRepo.authenticate(login)
                 .concatMap {
                     authResponse ->
                     userRepo.getUser()
