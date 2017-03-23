@@ -166,9 +166,9 @@ class RealmRepository(private val realm: Realm) : Repository() {
                     val products = task.products?.map {
                         productForTake ->
                         it.copyToRealm(RealmProductForTake(
-                                product = it.where(RealmProduct::class.java)
+                                product = RealmProduct()/*it.where(RealmProduct::class.java)
                                         .equalTo("id", productForTake.productId)
-                                        .findFirst(),
+                                        .findFirst()*/,
                                 count = productForTake.count
                         ))
                     }
@@ -316,9 +316,9 @@ class RealmRepository(private val realm: Realm) : Repository() {
                 val products = task.products?.map {
                     productForTake ->
                     it.copyToRealm(RealmProductForTake(
-                            product = it.where(RealmProduct::class.java)
+                            product = RealmProduct()/*it.where(RealmProduct::class.java)
                                     .equalTo("id", productForTake.productId)
-                                    .findFirst(),
+                                    .findFirst()*/,
                             count = productForTake.count
                     ))
                 }
@@ -353,9 +353,12 @@ class RealmRepository(private val realm: Realm) : Repository() {
         return Observable.create<Boolean> {
             sub ->
             realm.executeTransactionAsync({
-                it.delete(RealmUser::class.java)
                 it.delete(RealmTask::class.java)
                 it.delete(RealmTaskType::class.java)
+                it.delete(RealmExpedition::class.java)
+                it.delete(RealmProduct::class.java)
+                it.delete(RealmProductForTake::class.java)
+                it.delete(RealmUser::class.java)
             }, {
                 sub.onNext(true)
             }, {
@@ -363,6 +366,5 @@ class RealmRepository(private val realm: Realm) : Repository() {
                 sub.onError(error)
             })
         }
-
     }
 }

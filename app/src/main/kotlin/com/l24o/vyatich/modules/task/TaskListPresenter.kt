@@ -118,6 +118,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
 
     fun fetchData() {
         view?.setLoadingVisible(true)
+        realmRep.clearAll()
         subscriptions += taskRepo.getTypeAndProductsAndExp()
                 .flatMap {
                     result ->
@@ -127,18 +128,28 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
                     result ->
                     taskRepo.getTasks()
                 }
-                .flatMap {
+                /*.flatMap {
                     tasks ->
                     realmRep.saveTasks(tasks)
                 }
                 .flatMap({
                     result ->
                     realmRep.fetchTasks(showNewTasks, showAllTasks, selectedType, selectedExp)
-                })
+                })*/
                 .subscribe({
                     tasks ->
                     view?.setLoadingVisible(false)
-                    view?.showData(tasks)
+                    val list = arrayListOf<RealmTask>()
+                    for (task in tasks) {
+                        list.add(RealmTask(
+                                id = task.id,
+                                description = task.description,
+                                startDate = task.startDate,
+                                endDate = task.endDate,
+                                userId = task.userId
+                        ))
+                    }
+                    view?.showData(list)
                 }, {
                     error ->
                     view?.setLoadingVisible(false)

@@ -52,7 +52,7 @@ class SignInActivity : MvpActivity(), ISignInView {
 
     private fun initViews() {
         inDebugMode {
-            emailEditText.setText("7777")
+            emailEditText.setText("e0010003636")
             passwordEditText.setText("q1w2e3r4")
         }
 

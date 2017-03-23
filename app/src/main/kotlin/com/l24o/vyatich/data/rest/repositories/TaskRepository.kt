@@ -7,6 +7,12 @@ import rx.Observable
 
 class TaskRepository(private val taskDataSource: TaskDataSource) : Repository() {
 
+    fun getTaskById(taskId: String): Observable<Task> {
+        return taskDataSource
+                .getTaskById(taskId)
+                .compose(this.applySchedulers<Task>())
+    }
+
     fun getTasks(): Observable<List<Task>> {
         return taskDataSource
                 .getTasks()

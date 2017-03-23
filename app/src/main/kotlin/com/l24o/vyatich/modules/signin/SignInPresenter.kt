@@ -73,6 +73,10 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
 
     private fun authenticate(login: String, password: String) {
         view?.setLoadingVisible(true)
+
+        view?.navigateToTasks()
+        view?.setLoadingVisible(false)
+
         subscriptions += authRepo.authenticate(login, password)
                 .concatMap {
                     authResponse ->
