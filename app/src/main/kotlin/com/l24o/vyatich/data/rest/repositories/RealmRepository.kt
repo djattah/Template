@@ -26,41 +26,10 @@ class RealmRepository(private val realm: Realm) : Repository() {
                 }
     }
 
-    fun fetchTaskTypes(): Observable<List<RealmTaskType>> {
-        return realm
-                .where(RealmTaskType::class.java)
-                .findAll()
-                .asObservable()
-                .flatMap {
-                    results ->
-                    Observable.just(realm.copyFromRealm(results))
-                }
-    }
-
-    fun fetchExp(): Observable<List<RealmExpedition>> {
-        return realm
-                .where(RealmExpedition::class.java)
-                .findAll()
-                .asObservable()
-                .flatMap {
-                    results ->
-                    Observable.just(realm.copyFromRealm(results))
-                }
-    }
-
-    fun fetchSyncTasks(): Observable<List<RealmTask>> {
-        return realm
-                .where(RealmTask::class.java)
-                .equalTo("needSync", true)
-                .findAll()
-                .asObservable()
-                .flatMap {
-                    results ->
-                    Observable.just(realm.copyFromRealm(results))
-                }
-    }
-
-    fun fetchTasks(showNewTasks: Boolean, showAllTasks: Boolean, selectedType: String?, selectedExp: String?): Observable<List<RealmTask>> {
+    /**
+     * достаём таски и лок бд большому количеству условий
+     */
+    /*fun fetchTasks(showNewTasks: Boolean, showAllTasks: Boolean, selectedType: String?, selectedExp: String?): Observable<List<RealmTask>> {
         val user = realm.where(RealmUser::class.java)
                 .findFirst()
         return when {
@@ -133,30 +102,24 @@ class RealmRepository(private val realm: Realm) : Repository() {
                         }
             }
         }
-    }
+    }*/
 
-    fun fetchTaskById(id: String): Observable<RealmTask> {
+    fun fetchTaskByUserId(userId: String): Observable<RealmTask> {
         return Observable.just(realm.copyFromRealm(
                 realm
                         .where(RealmTask::class.java)
-                        .equalTo("id", id)
+                        .equalTo("user_id", userId)
                         .findFirst()
         ))
     }
 
-    fun fetchUser(): Observable<RealmUser> {
+    fun fetchTaskByDocumentId(documentId: Long): Observable<RealmTask> {
         return Observable.just(realm.copyFromRealm(
                 realm
-                        .where(RealmUser::class.java)
+                        .where(RealmTask::class.java)
+                        .equalTo("document_id", documentId)
                         .findFirst()
         ))
-    }
-
-    fun hasUser(): Observable<Long> {
-        return Observable.just(
-                realm.where(RealmUser::class.java)
-                        .count()
-        )
     }
 
     fun saveTasks(tasks: List<Task>): Observable<Boolean> {
@@ -203,101 +166,6 @@ class RealmRepository(private val realm: Realm) : Repository() {
         }
     }
 
-    fun saveTaskTypesExpProducts(types: List<TaskType>, expeditions: List<Expedition>, products: List<Product>): Observable<Boolean> {
-        return Observable.create<Boolean> { sub ->
-            realm.executeTransactionAsync({
-                it.copyToRealmOrUpdate(types.map {
-                    RealmTaskType(
-                            id = it.id,
-                            name = it.name,
-                            code = it.code
-                    )
-                })
-                it.copyToRealmOrUpdate(expeditions.map {
-                    RealmExpedition(
-                            id = it.id,
-                            name = it.name,
-                            code = it.code
-                    )
-                })
-                it.copyToRealmOrUpdate(products.map {
-                    RealmProduct(
-                            id = it.id,
-                            name = it.name,
-                            unit = it.unit
-                    )
-                })
-            },
-                    {
-                        sub.onNext(true)
-                    }, {
-                error ->
-                sub.onError(error)
-            })
-        }
-    }
-
-    fun saveTaskTypes(taskTypes: List<TaskType>): Observable<Boolean> {
-        return Observable.create<Boolean> { sub ->
-            realm.executeTransactionAsync({
-                it.copyToRealmOrUpdate(taskTypes.map {
-                    RealmTaskType(
-                            id = it.id,
-                            name = it.name,
-                            code = it.code
-                    )
-                })
-            },
-                    {
-                        sub.onNext(true)
-                    }, {
-                error ->
-                sub.onError(error)
-            })
-        }
-    }
-
-    fun saveExpeditions(expeditions: List<Expedition>): Observable<Boolean> {
-        return Observable.create<Boolean> { sub ->
-            realm.executeTransactionAsync({
-                it.copyToRealmOrUpdate(expeditions.map {
-                    RealmExpedition(
-                            id = it.id,
-                            name = it.name,
-                            code = it.code
-                    )
-                })
-            },
-                    {
-                        sub.onNext(true)
-                    }, {
-                error ->
-                sub.onError(error)
-            })
-        }
-    }
-
-    fun saveUser(user: User): Observable<Boolean> {
-        return Observable.create<Boolean> { sub ->
-            realm.executeTransactionAsync({
-                it.delete(RealmUser::class.java)
-                it.copyToRealm(
-                        RealmUser(
-                                id = user.id,
-                                fio = user.fio,
-                                phone = user.phone
-                        )
-                )
-            },
-                    {
-                        sub.onNext(true)
-                    }, {
-                error ->
-                sub.onError(error)
-            })
-        }
-    }
-
     fun updateTask(task: RealmTask): Observable<Boolean> {
         return Observable.create<Boolean> { sub ->
             realm.executeTransactionAsync({
@@ -316,26 +184,27 @@ class RealmRepository(private val realm: Realm) : Repository() {
         return Observable.create<Boolean> { sub ->
             realm.executeTransactionAsync({
                 val products = task.products?.map {
-                    productForTake ->
-                    it.copyToRealm(RealmProductForTake(
-                            product = it.where(RealmProduct::class.java)
-                                    .equalTo("id", productForTake.productId)
-                                    .findFirst(),
-                            count = productForTake.count
+                    product ->
+                    it.copyToRealm(RealmProduct(
+                            id_n = product.id_n,
+                            prod = product . prod,
+                            prod_s = product . prod_s,
+                            pranu = product.pranu,
+                            pranu_s = product.pranu_s,
+                            pranu2 = product.pranu2,
+                            pranu2_s = product.pranu2_s,
+                            kolvo_m = product.kolvo_m,
+                            kolvo_ot = product.kolvo_ot
                     ))
                 }
                 val realmTask = RealmTask(
-                        id = task.id,
-                        description = task.description,
-                        type = it.where(RealmTaskType::class.java)
-                                .equalTo("id", task.typeId)
-                                .findFirst(),
-                        expedition = it.where(RealmExpedition::class.java)
-                                .equalTo("id", task.expeditionId)
-                                .findFirst(),
-                        startDate = task.startDate,
-                        endDate = task.endDate,
-                        userId = task.userId
+                        user_id = task.user_id,
+                        user_name = task.user_name,
+                        document_id = task.document_id,
+                        expidition = task.expidition,
+                        type = task.type,
+                        driver = task.driver,
+                        car = task.car
                 )
                 if (products != null) {
                     realmTask.products.addAll(products)
@@ -355,9 +224,8 @@ class RealmRepository(private val realm: Realm) : Repository() {
         return Observable.create<Boolean> {
             sub ->
             realm.executeTransactionAsync({
-                it.delete(RealmUser::class.java)
                 it.delete(RealmTask::class.java)
-                it.delete(RealmTaskType::class.java)
+                it.delete(RealmProduct::class.java)
             }, {
                 sub.onNext(true)
             }, {

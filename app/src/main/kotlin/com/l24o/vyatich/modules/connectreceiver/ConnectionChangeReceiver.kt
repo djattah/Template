@@ -47,8 +47,8 @@ class ConnectionChangeReceiver : BroadcastReceiver() {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = cm.activeNetworkInfo
         if (activeNetwork?.isConnectedOrConnecting ?: false) {
-            realmRepo
-                    .fetchSyncTasks()
+            /*realmRepo
+                    .fetchTasks()
                     .subscribe({
                         tasks ->
                         for (task in tasks) {
@@ -57,7 +57,7 @@ class ConnectionChangeReceiver : BroadcastReceiver() {
                                         realmRepo.updateTask(task)
                                     }, Throwable::printStackTrace)
                         }
-                    })
+                    })*/
 
         }
     }

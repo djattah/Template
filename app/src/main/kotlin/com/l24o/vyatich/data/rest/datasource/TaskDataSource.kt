@@ -19,38 +19,12 @@ interface TaskDataSource {
     fun getTasks(): Observable<List<Task>>
 
     @GET("task/startTask")
-    fun startTask(@Field("document_id") document_id: Int): Observable<ResponseBody>
+    fun startTask(@Field("document_id") document_id: Long): Observable<ResponseBody>
 
     @GET("task/cancelTask")
-    fun cancelTask(@Field("document_id") document_id: Int): Observable<ResponseBody>
+    fun cancelTask(@Field("document_id") document_id: Long): Observable<ResponseBody>
 
     @GET("task/endTask")
-    fun endTask(@Field("document_id") document_id: Int): Observable<ResponseBody>
+    fun endTask(@Field("document_id") document_id: Long): Observable<ResponseBody>
 
-
-
-    // prev
-    //@GET("task/getTasks")
-    //fun getTasks(): Observable<List<Task>>
-
-    @GET("task/getTaskTypes")
-    fun getTaskTypes(): Observable<List<TaskType>>
-
-    @GET("task/getExpeditions")
-    fun getExpeditions(): Observable<List<Expedition>>
-
-    @GET("task/getProducts")
-    fun getProducts(): Observable<List<Product>>
-
-    @FormUrlEncoded
-    @POST("task/startTask")
-    fun startTask(@Field("taskId") taskId: String): Observable<Task>
-
-    @FormUrlEncoded
-    @POST("task/cancelTask")
-    fun cancelTask(@Field("taskId") taskId: String): Observable<Task>
-
-    @FormUrlEncoded
-    @POST("task/endTask")
-    fun endTask(@Field("taskId") taskId: String): Observable<Task>
 }

@@ -51,33 +51,21 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
     }
 
     override fun takeTask() {
-        subscriptions += taskRepo.startTask(task.id)
-                .flatMap { task ->
-                    realmRep.updateTask(task)
-                }
-                .subscribe({
-                    result ->
-                    view?.navigateToTasks()
-                }, {
-                    error ->
-                    view?.showMessage(error.parsedMessage())
-                })
+        if (taskRepo.startTask(task.document_id)) {
+            view?.navigateToTasks()
+        } else {
+            view?.showMessage("ошибка при старте задачи")
+        }
     }
 
     override fun finishTask() {
         if (connectionManager.isConnected()) {
-            subscriptions += taskRepo.endTask(task.id)
-                    .flatMap { task ->
-                        realmRep.updateTask(task)
-                    }
-                    .subscribe({
-                        result ->
-                        view?.navigateToTasks()
-                    }, {
-                        error ->
-                        view?.showMessage(error.parsedMessage())
-                    })
-        } else {
+            if (taskRepo.endTask(task.document_id)) {
+                view?.navigateToTasks()
+            } else {
+                view?.showMessage("ошибка при финише задачи")
+            }
+        } /*else {
             task.endDate = Date()
             task.needSync = true
             subscriptions += realmRep.updateTask(task)
@@ -88,26 +76,20 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
                         error ->
                         view?.showMessage(error.parsedMessage())
                     })
-        }
+        }*/
     }
 
     override fun cancelTask() {
-        subscriptions += taskRepo.cancelTask(task.id)
-                .flatMap { task ->
-                    realmRep.updateTask(task)
-                }
-                .subscribe({
-                    result ->
-                    view?.navigateToTasks()
-                }, {
-                    error ->
-                    view?.showMessage(error.parsedMessage())
-                })
+        if (taskRepo.cancelTask(task.document_id)) {
+            view?.navigateToTasks()
+        } else {
+            view?.showMessage("ошибка при завершении задачи")
+        }
     }
 
     override fun onViewAttached() {
         super.onViewAttached()
-        subscriptions += realmRep.fetchTaskById(taskId!!)
+        subscriptions += realmRep.fetchTaskByDocumentId(taskId!!.toLong())
                 .subscribe({
                     task ->
                     this.task = task

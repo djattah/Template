@@ -14,6 +14,11 @@ import org.jetbrains.anko.startActivity
 
 class SignInActivity : MvpActivity(), ISignInView {
 
+    companion object {
+        val TEST_USER_ID = "e0010003636"
+        val TEST_PASSWORD = "q1w2e3r4"
+    }
+
     var presenter: ISignInPresenter = SignInPresenter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,8 +57,8 @@ class SignInActivity : MvpActivity(), ISignInView {
 
     private fun initViews() {
         inDebugMode {
-            emailEditText.setText("e0010003636")
-            passwordEditText.setText("q1w2e3r4")
+            emailEditText.setText(TEST_USER_ID)
+            passwordEditText.setText(TEST_PASSWORD)
         }
 
         loginButton.onClick {

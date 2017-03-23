@@ -7,6 +7,6 @@ object Constants {
 
     const val TOKEN = "TOKEN"
     // Bundle keys
-    const val KEY_TASK = "taskId"
+    const val KEY_TASK = "document_id"
 }
 

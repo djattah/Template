@@ -5,10 +5,8 @@ import com.l24o.vyatich.Constants
 import com.l24o.vyatich.common.mvp.RxPresenter
 import com.l24o.vyatich.data.rest.VyatichInterceptor
 import com.l24o.vyatich.data.rest.datasource.AuthDataSource
-import com.l24o.vyatich.data.rest.datasource.UserDataSource
 import com.l24o.vyatich.data.rest.repositories.AuthRepository
 import com.l24o.vyatich.data.rest.repositories.RealmRepository
-import com.l24o.vyatich.data.rest.repositories.UserRepository
 import com.l24o.vyatich.extensions.parsedMessage
 import io.realm.Realm
 import okhttp3.OkHttpClient
@@ -24,7 +22,6 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
 
     lateinit var authRepo: AuthRepository
     lateinit var realmRepo: RealmRepository
-    lateinit var userRepo: UserRepository
 
     init {
         val client = OkHttpClient.Builder()
@@ -43,8 +40,6 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
 
         authRepo = AuthRepository(adapter.create(
                 AuthDataSource::class.java))
-        userRepo = UserRepository(adapter.create(
-                UserDataSource::class.java))
         realmRepo = RealmRepository(Realm.getDefaultInstance())
 
     }
@@ -53,7 +48,7 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
         super.onViewAttached()
 
         view?.setLoadingVisible(true)
-        subscriptions += realmRepo.hasUser()
+        /*subscriptions += realmRepo.hasUser()
                 .subscribe({
                     result ->
                     view?.setLoadingVisible(false)
@@ -64,7 +59,7 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
                     error ->
                     view?.setLoadingVisible(false)
                     view?.showMessage(error.parsedMessage())
-                })
+                })*/
     }
 
     override fun onSignInClick(login: String, password: String) {
@@ -74,16 +69,12 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
     private fun authenticate(login: String, password: String) {
         view?.setLoadingVisible(true)
 
+        if (login == SignInActivity.TEST_USER_ID && password == SignInActivity.TEST_PASSWORD) {
+            view?.navigateToTasks()
+            view?.setLoadingVisible(false)
+        }
         // выпилил password, тк его нет в бд
-        subscriptions += authRepo.authenticate(login)
-                .concatMap {
-                    authResponse ->
-                    userRepo.getUser()
-                }
-                .concatMap {
-                    user ->
-                    realmRepo.saveUser(user)
-                }
+        /*subscriptions += authRepo.authenticate(login)
                 .subscribe(
                         {
                             result ->
@@ -94,6 +85,6 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
                             view?.showMessage(error.parsedMessage())
                             view?.setLoadingVisible(false)
                         }
-                )
+                )*/
     }
 }

@@ -9,7 +9,6 @@ import com.l24o.vyatich.R
 import com.l24o.vyatich.common.delegates.extras
 import com.l24o.vyatich.common.mvp.MvpActivity
 import com.l24o.vyatich.data.realm.models.RealmTask
-import com.l24o.vyatich.data.realm.models.toTaskType
 import kotlinx.android.synthetic.main.activity_task.*
 import org.jetbrains.anko.onClick
 
@@ -46,13 +45,13 @@ class TaskActivity : MvpActivity(), ITaskActivityView {
     }
 
     override fun fillInfo(task: RealmTask) {
-        type.text = task.type.name
-        descriptions.text = task.description
-        button.visibility = if (task.endDate != null) View.GONE else View.VISIBLE
-        buttonCancel.visibility = if (task.userId != null && task.endDate == null) View.VISIBLE else View.GONE
-        button.setText(if (task.userId != null) R.string.task_done else R.string.task_take)
+        type.text = task.type
+        descriptions.text = "${task.document_id}"
+        button.visibility = if (task.user_name.isEmpty()) View.GONE else View.VISIBLE
+        buttonCancel.visibility = if (!task.user_name.isEmpty()) View.VISIBLE else View.GONE
+        button.setText(if (!task.user_name.isEmpty()) R.string.task_done else R.string.task_take)
         button.onClick {
-            if (task.userId != null) {
+            if (!task.user_name.isEmpty()) {
                 presenter.finishTask()
             } else {
                 presenter.takeTask()
@@ -61,9 +60,9 @@ class TaskActivity : MvpActivity(), ITaskActivityView {
         buttonCancel.onClick {
             presenter.cancelTask()
         }
-        taskTypeIcon.setImageResource(task.type.code.toTaskType().resId)
+        //taskTypeIcon.setImageResource(task.type.code.toTaskType().resId)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = ProductAdapter(task.products)
+        recyclerView.adapter = ProductAdapter(task.products.toList())
         recyclerView.visibility = View.VISIBLE
 
     }

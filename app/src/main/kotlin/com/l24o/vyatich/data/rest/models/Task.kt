@@ -47,35 +47,3 @@ data class Product(
         val kolvo_ot: Float
 )
 
-// prev
-data class TaskType(
-        @SerializedName("id")
-        val id: String,
-        @SerializedName("name")
-        val name: String,
-        @SerializedName("code")
-        val code: String
-)
-
-data class Expedition(
-        @SerializedName("id")
-        val id: String,
-        @SerializedName("name")
-        val name: String,
-        @SerializedName("code")
-        val code: String
-)
-
-data class ProductForTake(
-        @SerializedName("productId")
-        val productId: String,
-        @SerializedName("name")
-        val count: Int
-)
-
-data class TypeAndProductsAndExp(
-        val types: List<TaskType>,
-        val products: List<Product>,
-        val exps: List<Expedition>
-)
-

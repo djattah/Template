@@ -12,4 +12,10 @@ class AuthRepository(private val authDataSource: AuthDataSource) : Repository() 
                 .authenticate(user_id)
                 .compose(this.applySchedulers<ResponseBody>())
     }
+
+    fun logout(): Observable<ResponseBody> {
+        return authDataSource
+                .logout()
+                .compose(this.applySchedulers<ResponseBody>())
+    }
 }

@@ -65,6 +65,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
     }
 
     override fun onExpedWrapperClick() {
+        realmRep.fetchTasks()
         subscriptions += realmRep.fetchExp()
                 .subscribe({
                     exps ->

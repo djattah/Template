@@ -30,7 +30,7 @@ class TaskListActivity : BaseListActivity(), ITaskListView {
     }
 
     override fun navigateToTask(task: RealmTask) {
-        startActivity<TaskActivity>(Constants.KEY_TASK to task.id)
+        startActivity<TaskActivity>(Constants.KEY_TASK to task.document_id)
     }
 
     override fun onResume() {

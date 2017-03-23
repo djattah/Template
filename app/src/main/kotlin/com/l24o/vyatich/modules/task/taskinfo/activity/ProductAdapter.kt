@@ -5,13 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.l24o.vyatich.R
-import com.l24o.vyatich.data.realm.models.RealmProductForTake
+import com.l24o.vyatich.data.realm.models.RealmProduct
+import com.l24o.vyatich.data.rest.models.Product
 import kotlinx.android.synthetic.main.item_product.view.*
 
 /**
  * @author Alexander Popov on 03/02/2017.
  */
-class ProductAdapter(val data: List<RealmProductForTake>) : RecyclerView.Adapter<ProductAdapter.VH>() {
+class ProductAdapter(val data: List<RealmProduct>) : RecyclerView.Adapter<ProductAdapter.VH>() {
 
     override fun getItemCount(): Int {
         return data.size
@@ -27,10 +28,10 @@ class ProductAdapter(val data: List<RealmProductForTake>) : RecyclerView.Adapter
     }
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindView(product: RealmProductForTake) {
+        fun bindView(product: RealmProduct) {
             itemView.apply {
-                productName.text = product.product.name
-                productCountAndUnit.text = "${product.count} ${product.product.unit}"
+                productName.text = product.prod + product.prod_s
+                productCountAndUnit.text = "---"//"${product.count} ${product.product.unit}"
             }
         }
     }
