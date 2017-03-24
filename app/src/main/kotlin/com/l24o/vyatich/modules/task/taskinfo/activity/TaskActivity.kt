@@ -10,6 +10,8 @@ import com.l24o.vyatich.common.delegates.extras
 import com.l24o.vyatich.common.mvp.MvpActivity
 import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.realm.models.toTaskType
+import com.l24o.vyatich.data.rest.models.ProductForTake
+import com.l24o.vyatich.data.rest.models.Task
 import kotlinx.android.synthetic.main.activity_task.*
 import org.jetbrains.anko.onClick
 
@@ -18,13 +20,14 @@ import org.jetbrains.anko.onClick
  */
 class TaskActivity : MvpActivity(), ITaskActivityView {
 
-    var presenter: ITaskActivityPresenter = TaskActivityPresenter(this)
+    lateinit var presenter: ITaskActivityPresenter
     private var taskId: String? by extras(Constants.KEY_TASK)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        presenter = TaskActivityPresenter(this)
         setContentView(R.layout.activity_task)
-        supportActionBar?.title = "Задача №$taskId"
+        supportActionBar?.title = "Задача №${taskId}"
         presenter.taskId = taskId
         presenter.onViewAttached()
         initViews()
@@ -45,8 +48,8 @@ class TaskActivity : MvpActivity(), ITaskActivityView {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun fillInfo(task: RealmTask) {
-        type.text = task.type.name
+    override fun fillInfo(task: Task) {
+        type.text = task.typeId
         descriptions.text = task.description
         button.visibility = if (task.endDate != null) View.GONE else View.VISIBLE
         buttonCancel.visibility = if (task.userId != null && task.endDate == null) View.VISIBLE else View.GONE
@@ -61,11 +64,10 @@ class TaskActivity : MvpActivity(), ITaskActivityView {
         buttonCancel.onClick {
             presenter.cancelTask()
         }
-        taskTypeIcon.setImageResource(task.type.code.toTaskType().resId)
+        taskTypeIcon.setImageResource(R.drawable.ic_assignment_late_white_48dp)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = ProductAdapter(task.products)
+        recyclerView.adapter = ProductAdapter(task.products ?: arrayListOf<ProductForTake>())
         recyclerView.visibility = View.VISIBLE
-
     }
 
     override fun beforeDestroy() {

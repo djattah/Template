@@ -7,6 +7,7 @@ import com.l24o.vyatich.common.mvp.RxPresenter
 import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.VyatichInterceptor
 import com.l24o.vyatich.data.rest.datasource.TaskDataSource
+import com.l24o.vyatich.data.rest.models.Task
 import com.l24o.vyatich.data.rest.repositories.RealmRepository
 import com.l24o.vyatich.data.rest.repositories.TaskRepository
 import com.l24o.vyatich.extensions.parsedMessage
@@ -17,7 +18,6 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import rx.lang.kotlin.plusAssign
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -25,11 +25,10 @@ import java.util.concurrent.TimeUnit
  */
 class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITaskActivityView>(activityView), ITaskActivityPresenter {
 
-    var realmRep: RealmRepository = RealmRepository(Realm.getDefaultInstance())
     var taskRepo: TaskRepository
     var connectionManager: VyatichConnectionManager = VyatichConnectionManager(activityView.application())
 
-    override lateinit var task: RealmTask
+    override lateinit var task: Task
     override var taskId: String? = null
 
     init {
@@ -51,25 +50,8 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
     }
 
     override fun takeTask() {
-        subscriptions += taskRepo.startTask(task.id)
-                .flatMap { task ->
-                    realmRep.updateTask(task)
-                }
-                .subscribe({
-                    result ->
-                    view?.navigateToTasks()
-                }, {
-                    error ->
-                    view?.showMessage(error.parsedMessage())
-                })
-    }
-
-    override fun finishTask() {
         if (connectionManager.isConnected()) {
-            subscriptions += taskRepo.endTask(task.id)
-                    .flatMap { task ->
-                        realmRep.updateTask(task)
-                    }
+            subscriptions += taskRepo.startTask(task.id)
                     .subscribe({
                         result ->
                         view?.navigateToTasks()
@@ -77,10 +59,12 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
                         error ->
                         view?.showMessage(error.parsedMessage())
                     })
-        } else {
-            task.endDate = Date()
-            task.needSync = true
-            subscriptions += realmRep.updateTask(task)
+        }
+    }
+
+    override fun finishTask() {
+        if (connectionManager.isConnected()) {
+            subscriptions += taskRepo.endTask(task.id)
                     .subscribe({
                         result ->
                         view?.navigateToTasks()
@@ -92,34 +76,35 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
     }
 
     override fun cancelTask() {
-        subscriptions += taskRepo.cancelTask(task.id)
-                .flatMap { task ->
-                    realmRep.updateTask(task)
-                }
-                .subscribe({
-                    result ->
-                    view?.navigateToTasks()
-                }, {
-                    error ->
-                    view?.showMessage(error.parsedMessage())
-                })
+        if (connectionManager.isConnected()) {
+            subscriptions += taskRepo.cancelTask(task.id)
+                    .subscribe({
+                        result ->
+                        view?.navigateToTasks()
+                    }, {
+                        error ->
+                        view?.showMessage(error.parsedMessage())
+                    })
+        }
     }
 
     override fun onViewAttached() {
         super.onViewAttached()
-        subscriptions += realmRep.fetchTaskById(taskId!!)
-                .subscribe({
-                    task ->
-                    this.task = task
-                    view?.fillInfo(task)
-                }, {
-                    error ->
-                    view?.showMessage(error.parsedMessage())
-                })
+
+        if (connectionManager.isConnected()) {
+            subscriptions += taskRepo.getTaskById(taskId!!)
+                    .subscribe({
+                        task ->
+                        this.task = task
+                        view?.fillInfo(task)
+                    }, {
+                        error ->
+                        view?.showMessage(error.parsedMessage())
+                    })
+        }
     }
 
     override fun onViewDetached() {
-        realmRep.close()
         super.onViewDetached()
     }
 

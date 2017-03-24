@@ -38,7 +38,7 @@ class TaskListAdapter(val data: SortedList<Task>, val itemClick: (Task) -> Unit)
     class ViewHolder(itemView: View, val itemClick: (Task) -> Unit) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: Task) {
             itemView.apply {
-                //item_task_icon.setImageResource(item.typeId.code.toTaskType().resId)
+                item_task_icon.setImageResource(R.drawable.ic_assignment_late_white_48dp)
                 descriptions.text = item.description.replace("\n", " ")
                 type.text = item.typeId
                 var statusRes = R.string.task_status_new

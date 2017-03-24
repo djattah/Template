@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit
  */
 class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view), ITaskListPresenter {
 
-    var realmRep: RealmRepository = RealmRepository(Realm.getDefaultInstance())
     lateinit var taskRepo: TaskRepository
 
     override var showNewTasks: Boolean = true
@@ -51,7 +50,6 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
     }
 
     override fun onViewDetached() {
-        realmRep.close()
         super.onViewDetached()
     }
 
@@ -66,7 +64,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
     }
 
     override fun onExpedWrapperClick() {
-        subscriptions += realmRep.fetchExp()
+        subscriptions += taskRepo.getExpeditions()
                 .subscribe({
                     exps ->
                     view?.showExps(exps.map { it.name }, selectedExp)
@@ -80,10 +78,6 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
         view?.setLoadingVisible(true)
 
         subscriptions += taskRepo.getTypeAndProductsAndExp()
-                .flatMap {
-                    result ->
-                    realmRep.saveTaskTypesExpProducts(result.types, result.exps, result.products)
-                }
                 .flatMap {
                     result ->
                     taskRepo.getTasks()
@@ -102,7 +96,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
     }
 
     override fun onTypeWrapperClick() {
-        subscriptions += realmRep.fetchTaskTypes()
+        subscriptions += taskRepo.getTaskTypes()
                 .subscribe({
                     types ->
                     view?.showTypes(types.map { it.name }, selectedType)
@@ -113,14 +107,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
     }
 
     override fun onLogoutClick() {
-        subscriptions += realmRep.clearAll()
-                .subscribe({
-                    result ->
-                    view?.navigateToLogin()
-                }, {
-                    error ->
-                    view?.navigateToLogin()
-                })
+        view?.navigateToLogin()
     }
 
     override fun onViewAttached() {
@@ -130,12 +117,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
 
     fun fetchData() {
         view?.setLoadingVisible(true)
-        realmRep.clearAll()
         subscriptions += taskRepo.getTypeAndProductsAndExp()
-                .flatMap {
-                    result ->
-                    realmRep.saveTaskTypesExpProducts(result.types, result.exps, result.products)
-                }
                 .flatMap {
                     result ->
                     taskRepo.getTasks()
