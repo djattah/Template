@@ -10,13 +10,14 @@ import android.view.ViewGroup
 import com.l24o.vyatich.R
 import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.realm.models.toTaskType
+import com.l24o.vyatich.data.rest.models.Task
 import kotlinx.android.synthetic.main.item_task.view.*
 import org.jetbrains.anko.onClick
 
 /**
  * @author Alexander Popov on 11/01/2017.
  */
-class TaskListAdapter(val data: SortedList<RealmTask>, val itemClick: (RealmTask) -> Unit) : RecyclerView.Adapter<TaskListAdapter.ViewHolder>() {
+class TaskListAdapter(val data: SortedList<Task>, val itemClick: (Task) -> Unit) : RecyclerView.Adapter<TaskListAdapter.ViewHolder>() {
 
     var context: Context? = null
 
@@ -34,12 +35,12 @@ class TaskListAdapter(val data: SortedList<RealmTask>, val itemClick: (RealmTask
         return data.size()
     }
 
-    class ViewHolder(itemView: View, val itemClick: (RealmTask) -> Unit) : RecyclerView.ViewHolder(itemView) {
-        fun bind(item: RealmTask) {
+    class ViewHolder(itemView: View, val itemClick: (Task) -> Unit) : RecyclerView.ViewHolder(itemView) {
+        fun bind(item: Task) {
             itemView.apply {
-                item_task_icon.setImageResource(item.type.code.toTaskType().resId)
+                //item_task_icon.setImageResource(item.typeId.code.toTaskType().resId)
                 descriptions.text = item.description.replace("\n", " ")
-                type.text = item.type.name
+                type.text = item.typeId
                 var statusRes = R.string.task_status_new
                 var statusColor = R.color.colorPrimary
                 when {

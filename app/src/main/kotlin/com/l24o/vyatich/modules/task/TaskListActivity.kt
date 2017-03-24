@@ -11,6 +11,7 @@ import com.l24o.vyatich.Constants
 import com.l24o.vyatich.R
 import com.l24o.vyatich.common.mvp.BaseListActivity
 import com.l24o.vyatich.data.realm.models.RealmTask
+import com.l24o.vyatich.data.rest.models.Task
 import com.l24o.vyatich.extensions.materialDialog
 import com.l24o.vyatich.modules.signin.SignInActivity
 import com.l24o.vyatich.modules.task.taskinfo.activity.TaskActivity
@@ -29,7 +30,7 @@ class TaskListActivity : BaseListActivity(), ITaskListView {
         presenter.dropView()
     }
 
-    override fun navigateToTask(task: RealmTask) {
+    override fun navigateToTask(task: Task) {
         //startActivity<TaskActivity>(task)
         startActivity<TaskActivity>(Constants.KEY_TASK to task.id)
     }

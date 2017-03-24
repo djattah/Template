@@ -6,6 +6,7 @@ import com.l24o.vyatich.common.mvp.RxPresenter
 import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.VyatichInterceptor
 import com.l24o.vyatich.data.rest.datasource.TaskDataSource
+import com.l24o.vyatich.data.rest.models.Task
 import com.l24o.vyatich.data.rest.repositories.RealmRepository
 import com.l24o.vyatich.data.rest.repositories.TaskRepository
 import com.l24o.vyatich.extensions.parsedMessage
@@ -77,7 +78,16 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
 
     override fun refreshList() {
         view?.setLoadingVisible(true)
-        subscriptions += realmRep.fetchTasks(showNewTasks, showAllTasks, selectedType, selectedExp)
+
+        subscriptions += taskRepo.getTypeAndProductsAndExp()
+                .flatMap {
+                    result ->
+                    realmRep.saveTaskTypesExpProducts(result.types, result.exps, result.products)
+                }
+                .flatMap {
+                    result ->
+                    taskRepo.getTasks()
+                }
                 .subscribe({
                     tasks ->
                     view?.setLoadingVisible(false)
@@ -87,6 +97,8 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
                     view?.setLoadingVisible(false)
                     view?.showMessage(error.parsedMessage())
                 })
+
+        //subscriptions += realmRep.fetchTasks(showNewTasks, showAllTasks, selectedType, selectedExp)
     }
 
     override fun onTypeWrapperClick() {
@@ -128,28 +140,10 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
                     result ->
                     taskRepo.getTasks()
                 }
-                /*.flatMap {
-                    tasks ->
-                    realmRep.saveTasks(tasks)
-                }
-                .flatMap({
-                    result ->
-                    realmRep.fetchTasks(showNewTasks, showAllTasks, selectedType, selectedExp)
-                })*/
                 .subscribe({
                     tasks ->
                     view?.setLoadingVisible(false)
-                    val list = arrayListOf<RealmTask>()
-                    for (task in tasks) {
-                        list.add(RealmTask(
-                                id = task.id,
-                                description = task.description,
-                                startDate = task.startDate,
-                                endDate = task.endDate,
-                                userId = task.userId
-                        ))
-                    }
-                    view?.showData(list)
+                    view?.showData(tasks)
                 }, {
                     error ->
                     view?.setLoadingVisible(false)
@@ -157,7 +151,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
                 })
     }
 
-    override fun onClick(task: RealmTask) {
+    override fun onClick(task: Task) {
         subscriptions.clear()
         view?.navigateToTask(task)
     }
