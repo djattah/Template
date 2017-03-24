@@ -8,6 +8,8 @@ import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.VyatichInterceptor
 import com.l24o.vyatich.data.rest.datasource.TaskDataSource
 import com.l24o.vyatich.data.rest.models.Task
+import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isNew
+import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isProgress
 import com.l24o.vyatich.data.rest.repositories.RealmRepository
 import com.l24o.vyatich.data.rest.repositories.TaskRepository
 import com.l24o.vyatich.extensions.parsedMessage
@@ -112,7 +114,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
                 .subscribe({
                     tasks ->
                     view?.setLoadingVisible(false)
-                    view?.showData(tasks)
+                    view?.showData(filteringTasks(tasks))
                 }, {
                     error ->
                     view?.setLoadingVisible(false)
@@ -127,6 +129,30 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
 
     override fun onSwipeToRefresh() {
         fetchData()
+    }
+
+    private fun filteringTasks(tasks: List<Task>): List<Task> {
+        if (showNewTasks) {
+            var filterTasks = arrayListOf<Task>()
+            for (task in tasks) {
+                if (isNew(task))
+                    filterTasks.add(task)
+            }
+
+            return filterTasks
+        }
+
+        if (showAllTasks) {
+            var filterTasks = arrayListOf<Task>()
+            for (task in tasks) {
+                if (isProgress(task))
+                    filterTasks.add(task)
+            }
+
+            return filterTasks
+        }
+
+        return tasks
     }
 
 }
