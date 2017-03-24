@@ -7,7 +7,9 @@ import com.l24o.vyatich.common.mvp.RxPresenter
 import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.VyatichInterceptor
 import com.l24o.vyatich.data.rest.datasource.TaskDataSource
+import com.l24o.vyatich.data.rest.models.Product
 import com.l24o.vyatich.data.rest.models.Task
+import com.l24o.vyatich.data.rest.models.TaskType
 import com.l24o.vyatich.data.rest.repositories.RealmRepository
 import com.l24o.vyatich.data.rest.repositories.TaskRepository
 import com.l24o.vyatich.extensions.parsedMessage
@@ -63,45 +65,68 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
     }
 
     override fun finishTask() {
-        if (connectionManager.isConnected()) {
-            subscriptions += taskRepo.endTask(task.id)
-                    .subscribe({
-                        result ->
-                        view?.navigateToTasks()
-                    }, {
-                        error ->
-                        view?.showMessage(error.parsedMessage())
-                    })
-        }
+        subscriptions += taskRepo.endTask(task.id)
+                .subscribe({
+                    result ->
+                    view?.navigateToTasks()
+                }, {
+                    error ->
+                    view?.showMessage(error.parsedMessage())
+                })
     }
 
     override fun cancelTask() {
-        if (connectionManager.isConnected()) {
-            subscriptions += taskRepo.cancelTask(task.id)
-                    .subscribe({
-                        result ->
-                        view?.navigateToTasks()
-                    }, {
-                        error ->
-                        view?.showMessage(error.parsedMessage())
-                    })
-        }
+        subscriptions += taskRepo.cancelTask(task.id)
+                .subscribe({
+                    result ->
+                    view?.navigateToTasks()
+                }, {
+                    error ->
+                    view?.showMessage(error.parsedMessage())
+                })
     }
 
+    /**
+     * загружаем задачу, тип задачи и все продукты
+     */
     override fun onViewAttached() {
         super.onViewAttached()
 
-        if (connectionManager.isConnected()) {
-            subscriptions += taskRepo.getTaskById(taskId!!)
-                    .subscribe({
-                        task ->
-                        this.task = task
-                        view?.fillInfo(task)
-                    }, {
-                        error ->
-                        view?.showMessage(error.parsedMessage())
-                    })
-        }
+        subscriptions += taskRepo.getTaskById(taskId!!)
+                .subscribe({
+                    task ->
+                    this.task = task
+                    view?.fillTaskInfo(task)
+
+                    if (!task.typeId.isNullOrEmpty())
+                        taskRepo.getTaskTypes()
+                                .subscribe({
+                                    for (type in it)
+                                        if (type.id == task.typeId)
+                                            view?.fillTaskTypeInfo(type)
+                                }, {
+                                    error ->
+                                    view?.showMessage(error.parsedMessage())
+                                })
+
+                    if (task.products != null)
+                        taskRepo.getProducts()
+                                .subscribe({
+                                    var products = arrayListOf<Product>()
+                                    for (product in it)
+                                        for (take in task.products) {
+                                            if (take.productId == product.id)
+                                                products.add(product)
+                                        }
+                                    view?.fillTaskProductInfo(products)
+                                }, {
+                                    error ->
+                                    view?.showMessage(error.parsedMessage())
+                                })
+                }, {
+                    error ->
+                    view?.showMessage(error.parsedMessage())
+                })
     }
 
     override fun onViewDetached() {

@@ -49,7 +49,9 @@ data class Product(
         @SerializedName("name")
         val name: String,
         @SerializedName("unit")
-        val unit: String
+        val unit: String,
+        @SerializedName("count")
+        val count: String
 )
 
 data class ProductForTake(

@@ -6,16 +6,20 @@ import android.view.MenuItem
 import android.view.View
 import com.l24o.vyatich.Constants
 import com.l24o.vyatich.R
+import com.l24o.vyatich.common.VyatichConnectionManager
 import com.l24o.vyatich.common.delegates.extras
 import com.l24o.vyatich.common.mvp.MvpActivity
 import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.realm.models.toTaskType
+import com.l24o.vyatich.data.rest.models.Product
 import com.l24o.vyatich.data.rest.models.ProductForTake
 import com.l24o.vyatich.data.rest.models.Task
+import com.l24o.vyatich.data.rest.models.TaskType
 import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isCancelTask
 import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isEndTask
 import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isStartTask
 import kotlinx.android.synthetic.main.activity_task.*
+import org.jetbrains.anko.connectivityManager
 import org.jetbrains.anko.onClick
 
 /**
@@ -51,8 +55,17 @@ class TaskActivity : MvpActivity(), ITaskActivityView {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun fillInfo(task: Task) {
-        type.text = task.typeId
+    override fun fillTaskTypeInfo(taskType: TaskType) {
+        type.text = taskType.name
+    }
+
+    override fun fillTaskProductInfo(products: List<Product>) {
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = ProductAdapter(products)
+        recyclerView.visibility = View.VISIBLE
+    }
+
+    override fun fillTaskInfo(task: Task) {
         descriptions.text = task.description
         button.visibility = if (isStartTask(task) || isEndTask(task)) View.VISIBLE else View.GONE
         buttonCancel.visibility = if (isCancelTask(task)) View.VISIBLE else View.GONE
@@ -69,15 +82,10 @@ class TaskActivity : MvpActivity(), ITaskActivityView {
                 presenter.cancelTask()
         }
         taskTypeIcon.setImageResource(R.drawable.ic_assignment_late_white_48dp)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = ProductAdapter(task.products ?: arrayListOf<ProductForTake>())
-        recyclerView.visibility = View.VISIBLE
     }
 
     override fun beforeDestroy() {
         presenter.dropView()
     }
-
-
 
 }

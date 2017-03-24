@@ -2,6 +2,7 @@ package com.l24o.vyatich.modules.task
 
 import com.google.gson.Gson
 import com.l24o.vyatich.Constants
+import com.l24o.vyatich.common.VyatichConnectionManager
 import com.l24o.vyatich.common.mvp.RxPresenter
 import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.VyatichInterceptor
