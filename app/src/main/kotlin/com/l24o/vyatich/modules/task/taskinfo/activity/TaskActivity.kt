@@ -12,6 +12,9 @@ import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.realm.models.toTaskType
 import com.l24o.vyatich.data.rest.models.ProductForTake
 import com.l24o.vyatich.data.rest.models.Task
+import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isCancelTask
+import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isEndTask
+import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isStartTask
 import kotlinx.android.synthetic.main.activity_task.*
 import org.jetbrains.anko.onClick
 
@@ -27,7 +30,7 @@ class TaskActivity : MvpActivity(), ITaskActivityView {
         super.onCreate(savedInstanceState)
         presenter = TaskActivityPresenter(this)
         setContentView(R.layout.activity_task)
-        supportActionBar?.title = "Задача №${taskId}"
+        supportActionBar?.title = "Задача № ${taskId}"
         presenter.taskId = taskId
         presenter.onViewAttached()
         initViews()
@@ -51,18 +54,19 @@ class TaskActivity : MvpActivity(), ITaskActivityView {
     override fun fillInfo(task: Task) {
         type.text = task.typeId
         descriptions.text = task.description
-        button.visibility = if (task.endDate != null) View.GONE else View.VISIBLE
-        buttonCancel.visibility = if (task.userId != null && task.endDate == null) View.VISIBLE else View.GONE
-        button.setText(if (task.userId != null) R.string.task_done else R.string.task_take)
+        button.visibility = if (isStartTask(task) || isEndTask(task)) View.VISIBLE else View.GONE
+        buttonCancel.visibility = if (isCancelTask(task)) View.VISIBLE else View.GONE
+        button.setText(if (isStartTask(task)) R.string.task_take else R.string.task_done)
         button.onClick {
-            if (task.userId != null) {
+            if (isEndTask(task)) {
                 presenter.finishTask()
             } else {
                 presenter.takeTask()
             }
         }
         buttonCancel.onClick {
-            presenter.cancelTask()
+            if (isCancelTask(task))
+                presenter.cancelTask()
         }
         taskTypeIcon.setImageResource(R.drawable.ic_assignment_late_white_48dp)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -73,5 +77,7 @@ class TaskActivity : MvpActivity(), ITaskActivityView {
     override fun beforeDestroy() {
         presenter.dropView()
     }
+
+
 
 }

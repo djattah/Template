@@ -52,8 +52,8 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
     override fun onViewAttached() {
         super.onViewAttached()
 
-        view?.setLoadingVisible(true)
-        subscriptions += realmRepo.hasUser()
+        //view?.setLoadingVisible(true)
+        /*subscriptions += realmRepo.hasUser()
                 .subscribe({
                     result ->
                     view?.setLoadingVisible(false)
@@ -64,7 +64,7 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
                     error ->
                     view?.setLoadingVisible(false)
                     view?.showMessage(error.parsedMessage())
-                })
+                })*/
     }
 
     override fun onSignInClick(login: String, password: String) {
@@ -73,18 +73,10 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
 
     private fun authenticate(login: String, password: String) {
         view?.setLoadingVisible(true)
-
-        view?.navigateToTasks()
-        view?.setLoadingVisible(false)
-
         subscriptions += authRepo.authenticate(login, password)
                 .concatMap {
                     authResponse ->
                     userRepo.getUser()
-                }
-                .concatMap {
-                    user ->
-                    realmRepo.saveUser(user)
                 }
                 .subscribe(
                         {

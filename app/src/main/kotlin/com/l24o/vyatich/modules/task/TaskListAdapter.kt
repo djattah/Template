@@ -11,6 +11,11 @@ import com.l24o.vyatich.R
 import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.realm.models.toTaskType
 import com.l24o.vyatich.data.rest.models.Task
+import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isCancelTask
+import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isDone
+import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isNew
+import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isProgress
+import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isStartTask
 import kotlinx.android.synthetic.main.item_task.view.*
 import org.jetbrains.anko.onClick
 
@@ -44,15 +49,15 @@ class TaskListAdapter(val data: SortedList<Task>, val itemClick: (Task) -> Unit)
                 var statusRes = R.string.task_status_new
                 var statusColor = R.color.colorPrimary
                 when {
-                    item.endDate == null && item.userId == null -> {
+                    isNew(item) -> {
                         statusRes = R.string.task_status_new
                         statusColor = R.color.colorPrimary
                     }
-                    item.endDate == null && item.userId != null -> {
+                    isProgress(item) -> {
                         statusColor = R.color.colorYellow
                         statusRes = R.string.task_status_in_progress
                     }
-                    item.endDate != null -> {
+                    isDone(item) -> {
                         statusColor = R.color.colorGreen
                         statusRes = R.string.task_status_done
                     }

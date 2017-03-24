@@ -77,21 +77,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
     override fun refreshList() {
         view?.setLoadingVisible(true)
 
-        subscriptions += taskRepo.getTypeAndProductsAndExp()
-                .flatMap {
-                    result ->
-                    taskRepo.getTasks()
-                }
-                .subscribe({
-                    tasks ->
-                    view?.setLoadingVisible(false)
-                    view?.showData(tasks)
-                }, {
-                    error ->
-                    view?.setLoadingVisible(false)
-                    view?.showMessage(error.parsedMessage())
-                })
-
+        fetchData()
         //subscriptions += realmRep.fetchTasks(showNewTasks, showAllTasks, selectedType, selectedExp)
     }
 
@@ -112,7 +98,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
 
     override fun onViewAttached() {
         super.onViewAttached()
-        fetchData()
+        //fetchData()
     }
 
     fun fetchData() {

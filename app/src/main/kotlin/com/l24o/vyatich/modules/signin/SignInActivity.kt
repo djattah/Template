@@ -39,7 +39,7 @@ class SignInActivity : MvpActivity(), ISignInView {
 
     override fun navigateToTasks() {
         startActivity<TaskListActivity>()
-        finish()
+        //finish()
     }
 
     override fun setLoadingVisible(isVisible: Boolean) {
@@ -52,7 +52,7 @@ class SignInActivity : MvpActivity(), ISignInView {
 
     private fun initViews() {
         inDebugMode {
-            emailEditText.setText("e0010003636")
+            emailEditText.setText("e0010005517")
             passwordEditText.setText("q1w2e3r4")
         }
 

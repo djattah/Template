@@ -31,7 +31,6 @@ class TaskListActivity : BaseListActivity(), ITaskListView {
     }
 
     override fun navigateToTask(task: Task) {
-        //startActivity<TaskActivity>(task)
         startActivity<TaskActivity>(Constants.KEY_TASK to task.id)
     }
 
@@ -42,7 +41,7 @@ class TaskListActivity : BaseListActivity(), ITaskListView {
 
     override fun navigateToLogin() {
         val intent = Intent(this, SignInActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+        //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
 
