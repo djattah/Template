@@ -7,7 +7,9 @@ import com.l24o.vyatich.common.mvp.RxPresenter
 import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.VyatichInterceptor
 import com.l24o.vyatich.data.rest.datasource.TaskDataSource
+import com.l24o.vyatich.data.rest.models.Expedition
 import com.l24o.vyatich.data.rest.models.Task
+import com.l24o.vyatich.data.rest.models.TaskType
 import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isNew
 import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isProgress
 import com.l24o.vyatich.data.rest.repositories.RealmRepository
@@ -27,12 +29,15 @@ import java.util.concurrent.TimeUnit
  */
 class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view), ITaskListPresenter {
 
-    lateinit var taskRepo: TaskRepository
+    var taskRepo: TaskRepository
 
     override var showNewTasks: Boolean = true
     override var showAllTasks: Boolean = false
     var selectedType: String? = null
     var selectedExp: String? = null
+
+    var mTypes: List<TaskType>? = null;
+    var mExps: List<Expedition>? = null;
 
     init {
         val client = OkHttpClient.Builder()
@@ -50,6 +55,24 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
         taskRepo = TaskRepository(adapter.create(
                 TaskDataSource::class.java))
 
+        // грузим типы задач и экспедиции
+        // чтобы делать фильтр по ним
+        taskRepo.getTaskTypes()
+                .subscribe({
+                    types ->
+                    mTypes = types
+                }, {
+                    error ->
+                    view.showMessage(error.parsedMessage())
+                })
+        taskRepo.getExpeditions()
+                .subscribe({
+                    exps ->
+                    mExps = exps
+                }, {
+                    error ->
+                    view.showMessage(error.parsedMessage())
+                })
     }
 
     override fun onViewDetached() {
@@ -136,7 +159,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
             var filterTasks = arrayListOf<Task>()
             for (task in tasks) {
                 if (isNew(task))
-                    filterTasks.add(task)
+                    filterTasks.add(filteringTypeAndExps(task) ?: continue)
             }
 
             return filterTasks
@@ -146,13 +169,35 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
             var filterTasks = arrayListOf<Task>()
             for (task in tasks) {
                 if (isProgress(task))
-                    filterTasks.add(task)
+                    filterTasks.add(filteringTypeAndExps(task) ?: continue)
             }
 
             return filterTasks
         }
 
         return tasks
+    }
+
+    private fun filteringTypeAndExps(task: Task): Task? {
+        if (selectedType != null && mTypes != null) {
+            var isType = false
+            for (type in mTypes!!) {
+                if (selectedType == type.name && task.typeId == type.id)
+                    isType = true
+            }
+            if (!isType) return null
+        }
+
+        if (selectedExp != null && mExps != null) {
+            var isEps = false
+            for (exp in mExps!!) {
+                if (selectedExp == exp.name && task.expeditionId == exp.id)
+                    isEps = true
+            }
+            if (!isEps) return null
+        }
+
+        return task
     }
 
 }
