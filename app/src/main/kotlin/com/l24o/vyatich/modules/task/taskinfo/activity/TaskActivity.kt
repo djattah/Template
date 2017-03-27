@@ -9,8 +9,6 @@ import com.l24o.vyatich.R
 import com.l24o.vyatich.common.VyatichConnectionManager
 import com.l24o.vyatich.common.delegates.extras
 import com.l24o.vyatich.common.mvp.MvpActivity
-import com.l24o.vyatich.data.realm.models.RealmTask
-import com.l24o.vyatich.data.realm.models.toTaskType
 import com.l24o.vyatich.data.rest.models.Product
 import com.l24o.vyatich.data.rest.models.ProductForTake
 import com.l24o.vyatich.data.rest.models.Task

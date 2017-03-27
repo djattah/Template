@@ -66,10 +66,10 @@ class SignInActivity : MvpActivity(), ISignInView {
     }
 
     private fun initViews() {
-        /*inDebugMode {
+        inDebugMode {
             emailEditText.setText("e0010005517")
             passwordEditText.setText("16")
-        }*/
+        }
 
         val sharedPref = getPreferences(Context.MODE_PRIVATE)
         val defLogin = sharedPref.getString(getString(R.string.saving_user_login), "")

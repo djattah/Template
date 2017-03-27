@@ -22,9 +22,9 @@ import java.util.concurrent.TimeUnit
 
 class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISignInPresenter {
 
-    lateinit var authRepo: AuthRepository
-    lateinit var realmRepo: RealmRepository
-    lateinit var userRepo: UserRepository
+    var authRepo: AuthRepository
+    var realmRepo: RealmRepository
+    var userRepo: UserRepository
 
     init {
         val client = OkHttpClient.Builder()
@@ -53,7 +53,7 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
         super.onViewAttached()
 
         //view?.setLoadingVisible(true)
-        /*subscriptions += realmRepo.hasUser()
+        /*subscriptions += prevRealmRepo.hasUser()
                 .subscribe({
                     result ->
                     view?.setLoadingVisible(false)

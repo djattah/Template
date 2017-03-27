@@ -14,13 +14,12 @@ open class RealmTask(
         @PrimaryKey
         open var id: String = "",
         open var description: String = "",
-        open var type: RealmTaskType = RealmTaskType(),
-        open var expedition: RealmExpedition = RealmExpedition(),
+        open var typeId: String = "",
+        open var expeditionId: String = "",
         open var startDate: Date? = null,
         open var endDate: Date? = null,
         open var userId: String? = null,
-        open var products: RealmList<RealmProductForTake> = RealmList(),
-        open var needSync: Boolean = false
+        open var products: RealmList<RealmProductForTake> = RealmList()
 ) : RealmObject()
 
 open class RealmTaskType(
@@ -45,24 +44,6 @@ open class RealmProduct(
 ) : RealmObject()
 
 open class RealmProductForTake(
-        open var product: RealmProduct = RealmProduct(),
+        open var productId: String = "",
         open var count: Int = 0
 ) : RealmObject()
-
-enum class LocalTaskType(@DrawableRes val resId: Int) {
-    TRANSFER1(R.drawable.ic_assignment_late_white_48dp),
-    TRANSFER2(R.drawable.ic_assignment_turned_in_white_48dp),
-    TRANSFER3(R.drawable.ic_assignment_return_white_48dp),
-    TAKE(R.drawable.ic_assignment_white_48dp)
-}
-
-
-fun String.toTaskType(): LocalTaskType {
-    when (this) {
-        "transfer1" -> return LocalTaskType.TRANSFER1
-        "transfer2" -> return LocalTaskType.TRANSFER2
-        "transfer3" -> return LocalTaskType.TRANSFER3
-        "take" -> return LocalTaskType.TAKE
-        else -> return LocalTaskType.TRANSFER1
-    }
-}

@@ -2,9 +2,7 @@ package com.l24o.vyatich.modules.task
 
 import com.google.gson.Gson
 import com.l24o.vyatich.Constants
-import com.l24o.vyatich.common.VyatichConnectionManager
 import com.l24o.vyatich.common.mvp.RxPresenter
-import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.VyatichInterceptor
 import com.l24o.vyatich.data.rest.datasource.TaskDataSource
 import com.l24o.vyatich.data.rest.models.Expedition
@@ -30,6 +28,7 @@ import java.util.concurrent.TimeUnit
 class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view), ITaskListPresenter {
 
     var taskRepo: TaskRepository
+    var realmRepo: RealmRepository
 
     override var showNewTasks: Boolean = true
     override var showAllTasks: Boolean = false
@@ -54,6 +53,8 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
                 .build()
         taskRepo = TaskRepository(adapter.create(
                 TaskDataSource::class.java))
+
+        realmRepo = RealmRepository(Realm.getDefaultInstance())
 
         // грузим типы задач и экспедиции
         // чтобы делать фильтр по ним

@@ -10,7 +10,6 @@ import android.view.View
 import com.l24o.vyatich.Constants
 import com.l24o.vyatich.R
 import com.l24o.vyatich.common.mvp.BaseListActivity
-import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.models.Task
 import com.l24o.vyatich.extensions.materialDialog
 import com.l24o.vyatich.modules.signin.SignInActivity

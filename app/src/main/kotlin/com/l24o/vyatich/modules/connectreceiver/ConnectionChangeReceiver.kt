@@ -43,10 +43,10 @@ class ConnectionChangeReceiver : BroadcastReceiver() {
                 TaskDataSource::class.java)
 
         val taskRepo = TaskRepository(taskDataSource)
-        val realmRepo = RealmRepository(Realm.getDefaultInstance())
+        //val realmRepo = RealmRepository(Realm.getDefaultInstance())
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = cm.activeNetworkInfo
-        if (activeNetwork?.isConnectedOrConnecting ?: false) {
+        /*if (activeNetwork?.isConnectedOrConnecting ?: false) {
             realmRepo
                     .fetchSyncTasks()
                     .subscribe({
@@ -59,6 +59,6 @@ class ConnectionChangeReceiver : BroadcastReceiver() {
                         }
                     })
 
-        }
+        }*/
     }
 }

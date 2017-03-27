@@ -4,13 +4,11 @@ import com.google.gson.Gson
 import com.l24o.vyatich.Constants
 import com.l24o.vyatich.common.VyatichConnectionManager
 import com.l24o.vyatich.common.mvp.RxPresenter
-import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.VyatichInterceptor
 import com.l24o.vyatich.data.rest.datasource.TaskDataSource
 import com.l24o.vyatich.data.rest.models.Product
 import com.l24o.vyatich.data.rest.models.Task
 import com.l24o.vyatich.data.rest.models.TaskType
-import com.l24o.vyatich.data.rest.repositories.RealmRepository
 import com.l24o.vyatich.data.rest.repositories.TaskRepository
 import com.l24o.vyatich.extensions.parsedMessage
 import io.realm.Realm

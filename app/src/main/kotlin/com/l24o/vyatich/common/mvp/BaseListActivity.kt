@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.l24o.vyatich.R
-import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.models.Task
 import kotlinx.android.synthetic.main.layout_recycler_view.*
 import org.jetbrains.anko.toast

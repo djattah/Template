@@ -2,7 +2,6 @@ package com.l24o.vyatich.modules.task
 
 import com.l24o.vyatich.common.mvp.IListPresenter
 import com.l24o.vyatich.common.mvp.IListView
-import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.models.Task
 
 /**

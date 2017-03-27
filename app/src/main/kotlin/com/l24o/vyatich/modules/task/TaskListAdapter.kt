@@ -8,8 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.l24o.vyatich.R
-import com.l24o.vyatich.data.realm.models.RealmTask
-import com.l24o.vyatich.data.realm.models.toTaskType
 import com.l24o.vyatich.data.rest.models.Task
 import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isCancelTask
 import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isDone
