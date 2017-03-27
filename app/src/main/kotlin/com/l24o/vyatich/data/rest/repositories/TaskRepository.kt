@@ -33,6 +33,15 @@ class TaskRepository(private val taskDataSource: TaskDataSource) : Repository() 
                 .compose(this.applySchedulers<TypeAndProductsAndExp>())
     }
 
+    fun getAllData(): Observable<AllData> {
+        return Observable.zip(taskDataSource.getTasks(), taskDataSource.getTaskTypes(),
+                taskDataSource.getExpeditions(), taskDataSource.getProducts(), {
+            tasks, types, exp, products ->
+            AllData(tasks, types, products, exp)
+        })
+                .compose(this.applySchedulers<AllData>())
+    }
+
     fun getExpeditions(): Observable<List<Expedition>> {
         return taskDataSource
                 .getExpeditions()

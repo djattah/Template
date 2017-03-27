@@ -61,6 +61,13 @@ data class ProductForTake(
         val count: Int
 )
 
+open class AllData(
+        val tasks: List<Task>,
+        val types: List<TaskType>,
+        val products: List<Product>,
+        val exps: List<Expedition>
+)
+
 data class TypeAndProductsAndExp(
         val types: List<TaskType>,
         val products: List<Product>,

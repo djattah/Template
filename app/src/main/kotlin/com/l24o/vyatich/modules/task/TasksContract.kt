@@ -20,6 +20,7 @@ interface ITaskListPresenter : IListPresenter<Task, ITaskListView> {
     var showAllTasks: Boolean
     fun refreshList()
     fun onLogoutClick()
+    fun onUpdateClick()
     fun onTypeWrapperClick()
     fun onTypeChosen(type: String?)
     fun onExpedWrapperClick()

@@ -129,6 +129,10 @@ class TaskListActivity : BaseListActivity(), ITaskListView {
                 }.show()
                 return true
             }
+            R.id.menu_main_update -> {
+                presenter.onUpdateClick()
+                return true
+            }
             else ->
                 return super.onOptionsItemSelected(item)
         }

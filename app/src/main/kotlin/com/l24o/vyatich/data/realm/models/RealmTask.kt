@@ -19,7 +19,8 @@ open class RealmTask(
         open var startDate: Date? = null,
         open var endDate: Date? = null,
         open var userId: String? = null,
-        open var products: RealmList<RealmProductForTake> = RealmList()
+        open var products: RealmList<RealmProductForTake> = RealmList(),
+        open var isNeedSync: Boolean = false
 ) : RealmObject()
 
 open class RealmTaskType(
@@ -44,6 +45,7 @@ open class RealmProduct(
 ) : RealmObject()
 
 open class RealmProductForTake(
+        @PrimaryKey
         open var productId: String = "",
         open var count: Int = 0
 ) : RealmObject()

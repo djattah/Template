@@ -53,7 +53,6 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
                 .build()
         taskRepo = TaskRepository(adapter.create(
                 TaskDataSource::class.java))
-
         realmRepo = RealmRepository(Realm.getDefaultInstance())
 
         // грузим типы задач и экспедиции
@@ -121,6 +120,20 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
 
     override fun onLogoutClick() {
         view?.navigateToLogin()
+    }
+
+    override fun onUpdateClick() {
+        taskRepo.getAllData()
+                .subscribe({
+                    allData ->
+                    realmRepo.saveTasks(allData.tasks)
+                    realmRepo.saveExpeditions(allData.exps)
+                    realmRepo.saveTaskTypes(allData.types)
+                    realmRepo.saveProducts(allData.products)
+                }, {
+                    error ->
+                    view?.showMessage("не удалось обновить лок бд")
+                })
     }
 
     override fun onViewAttached() {

@@ -7,10 +7,6 @@ import io.realm.Realm
 import io.realm.exceptions.RealmMigrationNeededException
 import io.realm.RealmConfiguration
 
-
-
-
-
 class VyatichApplication : Application() {
 
 
