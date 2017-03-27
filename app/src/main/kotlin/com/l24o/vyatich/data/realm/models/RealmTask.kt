@@ -45,7 +45,6 @@ open class RealmProduct(
 ) : RealmObject()
 
 open class RealmProductForTake(
-        @PrimaryKey
         open var productId: String = "",
         open var count: Int = 0
 ) : RealmObject()

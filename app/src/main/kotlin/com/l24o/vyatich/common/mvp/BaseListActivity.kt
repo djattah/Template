@@ -7,14 +7,15 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.l24o.vyatich.R
+import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.models.Task
 import kotlinx.android.synthetic.main.layout_recycler_view.*
 import org.jetbrains.anko.toast
 
-abstract class BaseListActivity : MvpActivity(), IListView<Task> {
+abstract class BaseListActivity : MvpActivity(), IListView<RealmTask> {
 
-    protected var dataset: SortedList<Task> = SortedList<Task>(Task::class.java, object : SortedList.Callback<Task>() {
-        override fun areItemsTheSame(item1: Task, item2: Task): Boolean {
+    protected var dataset: SortedList<RealmTask> = SortedList<RealmTask>(RealmTask::class.java, object : SortedList.Callback<RealmTask>() {
+        override fun areItemsTheSame(item1: RealmTask, item2: RealmTask): Boolean {
             return item1.id == item2.id
         }
 
@@ -26,11 +27,11 @@ abstract class BaseListActivity : MvpActivity(), IListView<Task> {
             adapter?.notifyItemMoved(fromPosition, toPosition)
         }
 
-        override fun compare(o1: Task, o2: Task): Int {
+        override fun compare(o1: RealmTask, o2: RealmTask): Int {
             return o1.id.compareTo(o2.id)
         }
 
-        override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean {
+        override fun areContentsTheSame(oldItem: RealmTask, newItem: RealmTask): Boolean {
             return oldItem.id == newItem.id
         }
 
@@ -66,7 +67,7 @@ abstract class BaseListActivity : MvpActivity(), IListView<Task> {
         swipeRefreshLayout.isRefreshing = false
     }
 
-    override fun showData(dataset: List<Task>) {
+    override fun showData(dataset: List<RealmTask>) {
         this.dataset.clear()
         this.dataset.addAll(dataset)
         swipeRefreshLayout.isRefreshing = false

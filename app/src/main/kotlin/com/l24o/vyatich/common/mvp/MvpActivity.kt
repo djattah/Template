@@ -42,6 +42,4 @@ abstract class MvpActivity : AppCompatActivity(), IView {
         }
         if (visibility) progressDialog?.show() else progressDialog?.dismiss()
     }
-
-
 }

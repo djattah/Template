@@ -3,11 +3,11 @@ package com.l24o.vyatich.modules.task
 import com.google.gson.Gson
 import com.l24o.vyatich.Constants
 import com.l24o.vyatich.common.mvp.RxPresenter
+import com.l24o.vyatich.data.realm.models.RealmExpedition
+import com.l24o.vyatich.data.realm.models.RealmTask
+import com.l24o.vyatich.data.realm.models.RealmTaskType
 import com.l24o.vyatich.data.rest.VyatichInterceptor
 import com.l24o.vyatich.data.rest.datasource.TaskDataSource
-import com.l24o.vyatich.data.rest.models.Expedition
-import com.l24o.vyatich.data.rest.models.Task
-import com.l24o.vyatich.data.rest.models.TaskType
 import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isNew
 import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isProgress
 import com.l24o.vyatich.data.rest.repositories.RealmRepository
@@ -19,7 +19,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import rx.lang.kotlin.plusAssign
 import java.util.concurrent.TimeUnit
 
 /**
@@ -35,8 +34,8 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
     var selectedType: String? = null
     var selectedExp: String? = null
 
-    var mTypes: List<TaskType>? = null;
-    var mExps: List<Expedition>? = null;
+    var mTypes: List<RealmTaskType>? = null;
+    var mExps: List<RealmExpedition>? = null;
 
     init {
         val client = OkHttpClient.Builder()
@@ -57,18 +56,14 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
 
         // грузим типы задач и экспедиции
         // чтобы делать фильтр по ним
-        taskRepo.getTaskTypes()
+        taskRepo.getAllData()
                 .subscribe({
-                    types ->
-                    mTypes = types
-                }, {
-                    error ->
-                    view.showMessage(error.parsedMessage())
-                })
-        taskRepo.getExpeditions()
-                .subscribe({
-                    exps ->
-                    mExps = exps
+                    allData ->
+                    realmRepo.clearAll()
+                    realmRepo.saveTasks(allData.tasks)
+                    realmRepo.saveExpeditions(allData.exps, view)
+                    realmRepo.saveTaskTypes(allData.types, view)
+                    realmRepo.saveProducts(allData.products)
                 }, {
                     error ->
                     view.showMessage(error.parsedMessage())
@@ -90,7 +85,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
     }
 
     override fun onExpedWrapperClick() {
-        subscriptions += taskRepo.getExpeditions()
+        realmRepo.fetchExp()
                 .subscribe({
                     exps ->
                     view?.showExps(exps.map { it.name }, selectedExp)
@@ -108,7 +103,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
     }
 
     override fun onTypeWrapperClick() {
-        subscriptions += taskRepo.getTaskTypes()
+        realmRepo.fetchTaskTypes()
                 .subscribe({
                     types ->
                     view?.showTypes(types.map { it.name }, selectedType)
@@ -126,28 +121,26 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
         taskRepo.getAllData()
                 .subscribe({
                     allData ->
+                    realmRepo.clearAll()
                     realmRepo.saveTasks(allData.tasks)
-                    realmRepo.saveExpeditions(allData.exps)
-                    realmRepo.saveTaskTypes(allData.types)
+                    realmRepo.saveExpeditions(allData.exps, view)
+                    realmRepo.saveTaskTypes(allData.types, view)
                     realmRepo.saveProducts(allData.products)
+                    fetchData()
                 }, {
                     error ->
-                    view?.showMessage("не удалось обновить лок бд")
+                    view?.showMessage(error.parsedMessage())
                 })
     }
 
     override fun onViewAttached() {
         super.onViewAttached()
-        //fetchData()
+        fetchData()
     }
 
     fun fetchData() {
         view?.setLoadingVisible(true)
-        subscriptions += taskRepo.getTypeAndProductsAndExp()
-                .flatMap {
-                    result ->
-                    taskRepo.getTasks()
-                }
+        realmRepo.fetchTasks()
                 .subscribe({
                     tasks ->
                     view?.setLoadingVisible(false)
@@ -157,9 +150,26 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
                     view?.setLoadingVisible(false)
                     view?.showMessage(error.parsedMessage())
                 })
+
+        realmRepo.fetchTaskTypes()
+                .subscribe({
+                    types ->
+                    mTypes = types
+                }, {
+                    error ->
+                    view?.showMessage(error.parsedMessage())
+                })
+        realmRepo.fetchExp()
+                .subscribe({
+                    exps ->
+                    mExps = exps
+                }, {
+                    error ->
+                    view?.showMessage(error.parsedMessage())
+                })
     }
 
-    override fun onClick(task: Task) {
+    override fun onClick(task: RealmTask) {
         subscriptions.clear()
         view?.navigateToTask(task)
     }
@@ -168,9 +178,9 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
         fetchData()
     }
 
-    private fun filteringTasks(tasks: List<Task>): List<Task> {
+    private fun filteringTasks(tasks: List<RealmTask>): List<RealmTask> {
         if (showNewTasks) {
-            var filterTasks = arrayListOf<Task>()
+            var filterTasks = arrayListOf<RealmTask>()
             for (task in tasks) {
                 if (isNew(task))
                     filterTasks.add(filteringTypeAndExps(task) ?: continue)
@@ -180,7 +190,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
         }
 
         if (showAllTasks) {
-            var filterTasks = arrayListOf<Task>()
+            var filterTasks = arrayListOf<RealmTask>()
             for (task in tasks) {
                 if (isProgress(task))
                     filterTasks.add(filteringTypeAndExps(task) ?: continue)
@@ -192,7 +202,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
         return tasks
     }
 
-    private fun filteringTypeAndExps(task: Task): Task? {
+    private fun filteringTypeAndExps(task: RealmTask): RealmTask? {
         if (selectedType != null && mTypes != null) {
             var isType = false
             for (type in mTypes!!) {

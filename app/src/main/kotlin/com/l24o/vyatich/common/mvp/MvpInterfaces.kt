@@ -9,7 +9,6 @@ interface IView {
     fun showMessage(messageResId: Int)
 }
 
-
 interface IPresenter<in V : IView> {
     fun takeView(view: V)
     fun onViewAttached()

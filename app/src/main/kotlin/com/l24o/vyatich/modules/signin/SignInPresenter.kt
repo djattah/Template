@@ -82,12 +82,13 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
                         {
                             result ->
                             view?.saveLoginData(login, password)
-                            view?.navigateToTasks()
                             view?.setLoadingVisible(false)
+                            view?.navigateToTasks()
                         },
                         { error ->
                             view?.showMessage(error.parsedMessage())
                             view?.setLoadingVisible(false)
+                            view?.navigateToTasks()
                         }
                 )
     }

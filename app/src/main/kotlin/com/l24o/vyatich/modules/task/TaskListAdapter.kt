@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.l24o.vyatich.R
+import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.models.Task
 import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isCancelTask
 import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isDone
@@ -20,7 +21,7 @@ import org.jetbrains.anko.onClick
 /**
  * @author Alexander Popov on 11/01/2017.
  */
-class TaskListAdapter(val data: SortedList<Task>, val itemClick: (Task) -> Unit) : RecyclerView.Adapter<TaskListAdapter.ViewHolder>() {
+class TaskListAdapter(val data: SortedList<RealmTask>, val itemClick: (RealmTask) -> Unit) : RecyclerView.Adapter<TaskListAdapter.ViewHolder>() {
 
     var context: Context? = null
 
@@ -38,8 +39,8 @@ class TaskListAdapter(val data: SortedList<Task>, val itemClick: (Task) -> Unit)
         return data.size()
     }
 
-    class ViewHolder(itemView: View, val itemClick: (Task) -> Unit) : RecyclerView.ViewHolder(itemView) {
-        fun bind(item: Task) {
+    class ViewHolder(itemView: View, val itemClick: (RealmTask) -> Unit) : RecyclerView.ViewHolder(itemView) {
+        fun bind(item: RealmTask) {
             itemView.apply {
                 item_task_icon.setImageResource(R.drawable.ic_assignment_late_white_48dp)
                 descriptions.text = item.description.replace("\n", " ")

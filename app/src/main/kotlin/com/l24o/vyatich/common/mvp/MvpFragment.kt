@@ -43,5 +43,4 @@ abstract class MvpFragment : Fragment(), IView {
         }
         if (visibility) progressDialog?.show() else progressDialog?.dismiss()
     }
-
 }
