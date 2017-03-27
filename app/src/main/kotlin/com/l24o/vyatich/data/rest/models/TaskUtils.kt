@@ -1,6 +1,8 @@
 package com.l24o.vyatich.data.rest.models
 
 import com.l24o.vyatich.data.realm.models.RealmTask
+import java.util.*
+
 
 /**
  * @autor Gorodilov Nikita
@@ -12,9 +14,6 @@ class TaskUtils {
         /**
          * задачу можно взять в работу
          */
-        fun isStartTask(task: Task): Boolean {
-            return task.userId.isNullOrEmpty();
-        }
         fun isStartTask(task: RealmTask): Boolean {
             return task.userId.isNullOrEmpty();
         }
@@ -22,9 +21,6 @@ class TaskUtils {
         /**
          * задачу можно отменить
          */
-        fun isCancelTask(task: Task): Boolean {
-            return !task.userId.isNullOrEmpty() && task.endDate == null;
-        }
         fun isCancelTask(task: RealmTask): Boolean {
             return !task.userId.isNullOrEmpty() && task.endDate == null;
         }
@@ -32,9 +28,6 @@ class TaskUtils {
         /**
          * задачу можно завершить
          */
-        fun isEndTask(task: Task): Boolean {
-            return !task.userId.isNullOrEmpty();
-        }
         fun isEndTask(task: RealmTask): Boolean {
             return !task.userId.isNullOrEmpty();
         }
@@ -42,9 +35,6 @@ class TaskUtils {
         /**
          * задачу не взята в работу никем
          */
-        fun isNew(task: Task): Boolean {
-            return task.userId.isNullOrEmpty();
-        }
         fun isNew(task: RealmTask): Boolean {
             return task.userId.isNullOrEmpty();
         }
@@ -52,9 +42,6 @@ class TaskUtils {
         /**
          * задачу взята в работу
          */
-        fun isProgress(task: Task): Boolean {
-            return !task.userId.isNullOrEmpty();
-        }
         fun isProgress(task: RealmTask): Boolean {
             return !task.userId.isNullOrEmpty();
         }
@@ -62,11 +49,31 @@ class TaskUtils {
         /**
          * задачу выполнена
          */
-        fun isDone(task: Task): Boolean {
-            return task.endDate != null;
-        }
         fun isDone(task: RealmTask): Boolean {
             return task.endDate != null;
+        }
+
+        /**
+         * Стартуем задачу
+         */
+        fun startTask(task: RealmTask, userId: String) {
+            task.userId = userId
+            task.startDate = Date(System.currentTimeMillis())
+        }
+
+        /**
+         * Отменить задачу
+         */
+        fun cancelTask(task: RealmTask) {
+            task.userId = ""
+            task.startDate = null
+        }
+
+        /**
+         * Закончить задачу
+         */
+        fun endTask(task: RealmTask) {
+            task.endDate = Date(System.currentTimeMillis())
         }
     }
 

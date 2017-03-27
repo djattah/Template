@@ -4,11 +4,14 @@ import com.google.gson.Gson
 import com.l24o.vyatich.Constants
 import com.l24o.vyatich.common.VyatichConnectionManager
 import com.l24o.vyatich.common.mvp.RxPresenter
+import com.l24o.vyatich.data.realm.models.RealmProduct
+import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.VyatichInterceptor
 import com.l24o.vyatich.data.rest.datasource.TaskDataSource
 import com.l24o.vyatich.data.rest.models.Product
 import com.l24o.vyatich.data.rest.models.Task
 import com.l24o.vyatich.data.rest.models.TaskType
+import com.l24o.vyatich.data.rest.repositories.RealmRepository
 import com.l24o.vyatich.data.rest.repositories.TaskRepository
 import com.l24o.vyatich.extensions.parsedMessage
 import io.realm.Realm
@@ -26,9 +29,9 @@ import java.util.concurrent.TimeUnit
 class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITaskActivityView>(activityView), ITaskActivityPresenter {
 
     var taskRepo: TaskRepository
-    var connectionManager: VyatichConnectionManager = VyatichConnectionManager(activityView.application())
+    var realmRepo: RealmRepository
 
-    override lateinit var task: Task
+    override lateinit var task: RealmTask
     override var taskId: String? = null
 
     init {
@@ -46,42 +49,40 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
                 .build()
         taskRepo = TaskRepository(adapter.create(
                 TaskDataSource::class.java))
-
+        realmRepo = RealmRepository(Realm.getDefaultInstance())
     }
 
     override fun takeTask() {
-        if (connectionManager.isConnected()) {
-            subscriptions += taskRepo.startTask(task.id)
-                    .subscribe({
-                        result ->
-                        view?.navigateToTasks()
-                    }, {
-                        error ->
-                        view?.showMessage(error.parsedMessage())
-                    })
-        }
+        /*ssubscriptions += taskRepo.startTask(task.id)
+                .subscribe({
+                    result ->
+                    view?.navigateToTasks()
+                }, {
+                    error ->
+                    view?.showMessage(error.parsedMessage())
+                })*/
     }
 
     override fun finishTask() {
-        subscriptions += taskRepo.endTask(task.id)
+        /*subscriptions += taskRepo.endTask(task.id)
                 .subscribe({
                     result ->
                     view?.navigateToTasks()
                 }, {
                     error ->
                     view?.showMessage(error.parsedMessage())
-                })
+                })*/
     }
 
     override fun cancelTask() {
-        subscriptions += taskRepo.cancelTask(task.id)
+        /*subscriptions += taskRepo.cancelTask(task.id)
                 .subscribe({
                     result ->
                     view?.navigateToTasks()
                 }, {
                     error ->
                     view?.showMessage(error.parsedMessage())
-                })
+                })*/
     }
 
     /**
@@ -90,14 +91,14 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
     override fun onViewAttached() {
         super.onViewAttached()
 
-        subscriptions += taskRepo.getTaskById(taskId!!)
+        realmRepo.fetchTaskById(taskId!!)
                 .subscribe({
                     task ->
                     this.task = task
                     view?.fillTaskInfo(task)
 
                     if (!task.typeId.isNullOrEmpty())
-                        taskRepo.getTaskTypes()
+                        realmRepo.fetchTaskTypes()
                                 .subscribe({
                                     for (type in it)
                                         if (type.id == task.typeId)
@@ -108,9 +109,9 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
                                 })
 
                     if (task.products != null)
-                        taskRepo.getProducts()
+                        realmRepo.fetchProducts()
                                 .subscribe({
-                                    var products = arrayListOf<Product>()
+                                    var products = arrayListOf<RealmProduct>()
                                     for (product in it)
                                         for (take in task.products) {
                                             if (take.productId == product.id)

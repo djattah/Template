@@ -9,6 +9,9 @@ import com.l24o.vyatich.R
 import com.l24o.vyatich.common.VyatichConnectionManager
 import com.l24o.vyatich.common.delegates.extras
 import com.l24o.vyatich.common.mvp.MvpActivity
+import com.l24o.vyatich.data.realm.models.RealmProduct
+import com.l24o.vyatich.data.realm.models.RealmTask
+import com.l24o.vyatich.data.realm.models.RealmTaskType
 import com.l24o.vyatich.data.rest.models.Product
 import com.l24o.vyatich.data.rest.models.ProductForTake
 import com.l24o.vyatich.data.rest.models.Task
@@ -53,17 +56,17 @@ class TaskActivity : MvpActivity(), ITaskActivityView {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun fillTaskTypeInfo(taskType: TaskType) {
+    override fun fillTaskTypeInfo(taskType: RealmTaskType) {
         type.text = taskType.name
     }
 
-    override fun fillTaskProductInfo(products: List<Product>) {
+    override fun fillTaskProductInfo(products: List<RealmProduct>) {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = ProductAdapter(products)
         recyclerView.visibility = View.VISIBLE
     }
 
-    override fun fillTaskInfo(task: Task) {
+    override fun fillTaskInfo(task: RealmTask) {
         descriptions.text = task.description
         button.visibility = if (isStartTask(task) || isEndTask(task)) View.VISIBLE else View.GONE
         buttonCancel.visibility = if (isCancelTask(task)) View.VISIBLE else View.GONE

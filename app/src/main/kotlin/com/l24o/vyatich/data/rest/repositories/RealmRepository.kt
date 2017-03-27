@@ -9,6 +9,7 @@ import com.l24o.vyatich.modules.task.ITaskListView
 import com.l24o.vyatich.modules.task.TaskListActivity
 import io.realm.Realm
 import rx.Observable
+import rx.lang.kotlin.toSingletonObservable
 
 /**
  * @autor Gorodilov Nikita
@@ -37,6 +38,18 @@ class RealmRepository(private val realm: Realm) : Repository() {
                 .equalTo("isNeedSync", true)
                 .findAll()
                 .asObservable()
+                .flatMap {
+                    results ->
+                    Observable.just(realm.copyFromRealm(results))
+                }
+    }
+
+    fun fetchTaskById(taskId: String): Observable<RealmTask> {
+        return realm
+                .where(RealmTask::class.java)
+                .equalTo("id", taskId)
+                .findFirst()
+                .asObservable<RealmTask>()
                 .flatMap {
                     results ->
                     Observable.just(realm.copyFromRealm(results))
@@ -171,7 +184,8 @@ class RealmRepository(private val realm: Realm) : Repository() {
                 RealmProduct(
                         id = it.id,
                         name = it.name,
-                        unit = it.unit
+                        unit = it.unit,
+                        count = it.count
                 )
             })
         }
