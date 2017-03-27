@@ -1,5 +1,6 @@
 package com.l24o.vyatich.modules.signin
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import com.l24o.vyatich.R
@@ -11,6 +12,11 @@ import kotlinx.android.synthetic.main.activity_signin.*
 import org.jetbrains.anko.enabled
 import org.jetbrains.anko.onClick
 import org.jetbrains.anko.startActivity
+import android.content.SharedPreferences
+import android.content.Context.MODE_PRIVATE
+import com.pixplicity.easyprefs.library.Prefs.getPreferences
+
+
 
 class SignInActivity : MvpActivity(), ISignInView {
 
@@ -50,11 +56,26 @@ class SignInActivity : MvpActivity(), ISignInView {
         loginButton.enabled = !isVisible
     }
 
+    override fun saveLoginData(login: String, password: String) {
+        val sharedPref = getPreferences(Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+
+        editor.putString(getString(R.string.saving_user_login), login)
+        editor.putString(getString(R.string.saving_user_password), password)
+        editor.apply()
+    }
+
     private fun initViews() {
-        inDebugMode {
+        /*inDebugMode {
             emailEditText.setText("e0010005517")
-            passwordEditText.setText("q1w2e3r4")
-        }
+            passwordEditText.setText("16")
+        }*/
+
+        val sharedPref = getPreferences(Context.MODE_PRIVATE)
+        val defLogin = sharedPref.getString(getString(R.string.saving_user_login), "")
+        val defPassword = sharedPref.getString(getString(R.string.saving_user_password), "")
+        emailEditText.setText(defLogin)
+        passwordEditText.setText(defPassword)
 
         loginButton.onClick {
             presenter.onSignInClick(emailEditText.text.toString(), passwordEditText.text.toString())

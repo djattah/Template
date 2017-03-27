@@ -81,6 +81,7 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
                 .subscribe(
                         {
                             result ->
+                            view?.saveLoginData(login, password)
                             view?.navigateToTasks()
                             view?.setLoadingVisible(false)
                         },

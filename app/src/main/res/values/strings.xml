@@ -34,4 +34,8 @@
     <string name="not_chose_second">Не выбрана</string>
     <string name="choose_type">Выберите тип</string>
     <string name="clear">Очистить</string>
+
+    <!-- сохранение входных данных -->
+    <string name="saving_user_login">userlogin</string>
+    <string name="saving_user_password">userPassword</string>
 </resources>
