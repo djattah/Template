@@ -89,6 +89,24 @@ class RealmRepository(private val realm: Realm) : Repository() {
                 }
     }
 
+    fun fetchUser(): RealmUser {
+        return realm
+                .where(RealmUser::class.java)
+                .findFirst()
+    }
+
+    fun fetchUsers(): List<RealmUser> {
+        return realm
+                .where(RealmUser::class.java)
+                .findAll()
+    }
+
+    fun saveUser(user: RealmUser) {
+        realm.executeTransactionAsync {
+            it.copyToRealmOrUpdate(user)
+        }
+    }
+
     fun saveTasks(tasks: List<Task>) {
         realm.executeTransactionAsync{
             val list = tasks.map {
@@ -135,7 +153,7 @@ class RealmRepository(private val realm: Realm) : Repository() {
     }
 
     fun updateTask(task: RealmTask) {
-        realm.executeTransactionAsync{
+        realm.executeTransactionAsync {
             it.copyToRealmOrUpdate(task)
         }
     }
@@ -191,13 +209,19 @@ class RealmRepository(private val realm: Realm) : Repository() {
         }
     }
 
-    fun clearAll() {
+    fun clearAllTaskData() {
         realm.executeTransactionAsync{
             it.delete(RealmProductForTake::class.java)
             it.delete(RealmTask::class.java)
             it.delete(RealmExpedition::class.java)
             it.delete(RealmProduct::class.java)
             it.delete(RealmTaskType::class.java)
+        }
+    }
+
+    fun clearRealmUser() {
+        realm.executeTransactionAsync {
+            it.delete(RealmUser::class.java)
         }
     }
 }

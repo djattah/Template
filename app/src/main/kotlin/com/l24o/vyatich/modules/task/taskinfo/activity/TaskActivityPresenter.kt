@@ -2,15 +2,12 @@ package com.l24o.vyatich.modules.task.taskinfo.activity
 
 import com.google.gson.Gson
 import com.l24o.vyatich.Constants
-import com.l24o.vyatich.common.VyatichConnectionManager
 import com.l24o.vyatich.common.mvp.RxPresenter
 import com.l24o.vyatich.data.realm.models.RealmProduct
 import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.rest.VyatichInterceptor
 import com.l24o.vyatich.data.rest.datasource.TaskDataSource
-import com.l24o.vyatich.data.rest.models.Product
-import com.l24o.vyatich.data.rest.models.Task
-import com.l24o.vyatich.data.rest.models.TaskType
+import com.l24o.vyatich.data.rest.models.TaskUtils
 import com.l24o.vyatich.data.rest.repositories.RealmRepository
 import com.l24o.vyatich.data.rest.repositories.TaskRepository
 import com.l24o.vyatich.extensions.parsedMessage
@@ -53,36 +50,43 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
     }
 
     override fun takeTask() {
-        /*ssubscriptions += taskRepo.startTask(task.id)
+        subscriptions += taskRepo.startTask(task.id)
                 .subscribe({
                     result ->
+                    val user = realmRepo.fetchUser()
+                    TaskUtils.startTask(task, user.login)
+                    realmRepo.updateTask(task)
                     view?.navigateToTasks()
                 }, {
                     error ->
                     view?.showMessage(error.parsedMessage())
-                })*/
+                })
     }
 
     override fun finishTask() {
-        /*subscriptions += taskRepo.endTask(task.id)
+        subscriptions += taskRepo.endTask(task.id)
                 .subscribe({
                     result ->
+                    TaskUtils.endTask(task)
+                    realmRepo.updateTask(task)
                     view?.navigateToTasks()
                 }, {
                     error ->
                     view?.showMessage(error.parsedMessage())
-                })*/
+                })
     }
 
     override fun cancelTask() {
-        /*subscriptions += taskRepo.cancelTask(task.id)
+        subscriptions += taskRepo.cancelTask(task.id)
                 .subscribe({
                     result ->
+                    TaskUtils.cancelTask(task)
+                    realmRepo.updateTask(task)
                     view?.navigateToTasks()
                 }, {
                     error ->
                     view?.showMessage(error.parsedMessage())
-                })*/
+                })
     }
 
     /**

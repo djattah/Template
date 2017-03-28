@@ -52,13 +52,13 @@ class TaskListAdapter(val data: SortedList<RealmTask>, val itemClick: (RealmTask
                         statusRes = R.string.task_status_new
                         statusColor = R.color.colorPrimary
                     }
-                    isProgress(item) -> {
-                        statusColor = R.color.colorYellow
-                        statusRes = R.string.task_status_in_progress
-                    }
                     isDone(item) -> {
                         statusColor = R.color.colorGreen
                         statusRes = R.string.task_status_done
+                    }
+                    isProgress(item) -> {
+                        statusColor = R.color.colorYellow
+                        statusRes = R.string.task_status_in_progress
                     }
                 }
                 statusView.setBackgroundColor(ContextCompat.getColor(context!!, statusColor))

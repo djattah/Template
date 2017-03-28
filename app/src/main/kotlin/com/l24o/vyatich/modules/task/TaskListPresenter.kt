@@ -8,6 +8,9 @@ import com.l24o.vyatich.data.realm.models.RealmTask
 import com.l24o.vyatich.data.realm.models.RealmTaskType
 import com.l24o.vyatich.data.rest.VyatichInterceptor
 import com.l24o.vyatich.data.rest.datasource.TaskDataSource
+import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.endTask
+import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isDone
+import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isEndTask
 import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isNew
 import com.l24o.vyatich.data.rest.models.TaskUtils.Companion.isProgress
 import com.l24o.vyatich.data.rest.repositories.RealmRepository
@@ -56,10 +59,11 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
 
         // грузим типы задач и экспедиции
         // чтобы делать фильтр по ним
-        taskRepo.getAllData()
+        val user = realmRepo.fetchUser()
+        taskRepo.getAllData(user.login)
                 .subscribe({
                     allData ->
-                    realmRepo.clearAll()
+                    realmRepo.clearAllTaskData()
                     realmRepo.saveTasks(allData.tasks)
                     realmRepo.saveExpeditions(allData.exps, view)
                     realmRepo.saveTaskTypes(allData.types, view)
@@ -118,10 +122,11 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
     }
 
     override fun onUpdateClick() {
-        taskRepo.getAllData()
+        val user = realmRepo.fetchUser()
+        taskRepo.getAllData(user.login)
                 .subscribe({
                     allData ->
-                    realmRepo.clearAll()
+                    realmRepo.clearAllTaskData()
                     realmRepo.saveTasks(allData.tasks)
                     realmRepo.saveExpeditions(allData.exps, view)
                     realmRepo.saveTaskTypes(allData.types, view)
@@ -182,7 +187,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
         if (showNewTasks) {
             var filterTasks = arrayListOf<RealmTask>()
             for (task in tasks) {
-                if (isNew(task))
+                if (isNew(task) && !isDone(task))
                     filterTasks.add(filteringTypeAndExps(task) ?: continue)
             }
 
@@ -192,14 +197,20 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
         if (showAllTasks) {
             var filterTasks = arrayListOf<RealmTask>()
             for (task in tasks) {
-                if (isProgress(task))
+                if (isProgress(task) && !isDone(task))
                     filterTasks.add(filteringTypeAndExps(task) ?: continue)
             }
 
             return filterTasks
         }
 
-        return tasks
+        // filter isDone tasks
+        var filterTasks = arrayListOf<RealmTask>()
+        for (task in tasks) {
+            if (!isDone(task))
+                filterTasks.add(filteringTypeAndExps(task) ?: continue)
+        }
+        return filterTasks
     }
 
     private fun filteringTypeAndExps(task: RealmTask): RealmTask? {

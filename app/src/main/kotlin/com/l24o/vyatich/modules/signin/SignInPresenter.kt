@@ -3,9 +3,11 @@ package com.l24o.vyatich.modules.signin
 import com.google.gson.Gson
 import com.l24o.vyatich.Constants
 import com.l24o.vyatich.common.mvp.RxPresenter
+import com.l24o.vyatich.data.realm.models.RealmUser
 import com.l24o.vyatich.data.rest.VyatichInterceptor
 import com.l24o.vyatich.data.rest.datasource.AuthDataSource
 import com.l24o.vyatich.data.rest.datasource.UserDataSource
+import com.l24o.vyatich.data.rest.models.User
 import com.l24o.vyatich.data.rest.repositories.AuthRepository
 import com.l24o.vyatich.data.rest.repositories.RealmRepository
 import com.l24o.vyatich.data.rest.repositories.UserRepository
@@ -82,13 +84,18 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
                         {
                             result ->
                             view?.saveLoginData(login, password)
+                            realmRepo.clearRealmUser()
+                            realmRepo.saveUser(RealmUser(login, password))
                             view?.setLoadingVisible(false)
                             view?.navigateToTasks()
                         },
                         { error ->
                             view?.showMessage(error.parsedMessage())
                             view?.setLoadingVisible(false)
-                            view?.navigateToTasks()
+                            if (!realmRepo.fetchUsers().isEmpty())
+                                view?.navigateToTasks()
+                            else
+                                view?.showMessage(error.toString())
                         }
                 )
     }

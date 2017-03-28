@@ -16,6 +16,10 @@ interface TaskDataSource {
     @GET("task/getTasks")
     fun getTasks(): Observable<List<Task>>
 
+    @FormUrlEncoded
+    @POST("task/getTasksByUserId")
+    fun getTasksByUserId(@Field("userId") userId: String): Observable<List<Task>>
+
     @GET("task/getTaskTypes")
     fun getTaskTypes(): Observable<List<TaskType>>
 
