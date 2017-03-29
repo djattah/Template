@@ -68,6 +68,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
                     realmRepo.saveExpeditions(allData.exps, view)
                     realmRepo.saveTaskTypes(allData.types, view)
                     realmRepo.saveProducts(allData.products)
+                    fetchData()
                 }, {
                     error ->
                     view.showMessage(error.parsedMessage())
@@ -123,6 +124,7 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
 
     override fun onUpdateClick() {
         val user = realmRepo.fetchUser()
+        view?.setLoadingVisible(true)
         taskRepo.getAllData(user.login)
                 .subscribe({
                     allData ->
@@ -132,9 +134,11 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
                     realmRepo.saveTaskTypes(allData.types, view)
                     realmRepo.saveProducts(allData.products)
                     fetchData()
+                    view?.setLoadingVisible(false)
                 }, {
                     error ->
                     view?.showMessage(error.parsedMessage())
+                    view?.setLoadingVisible(false)
                 })
     }
 

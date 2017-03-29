@@ -2,11 +2,13 @@ package com.l24o.vyatich.modules.task
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ProgressBar
 import com.l24o.vyatich.Constants
 import com.l24o.vyatich.R
 import com.l24o.vyatich.common.mvp.BaseListActivity
@@ -15,6 +17,7 @@ import com.l24o.vyatich.data.rest.models.Task
 import com.l24o.vyatich.extensions.materialDialog
 import com.l24o.vyatich.modules.signin.SignInActivity
 import com.l24o.vyatich.modules.task.taskinfo.activity.TaskActivity
+import kotlinx.android.synthetic.main.activity_signin.*
 import kotlinx.android.synthetic.main.activity_task_list.*
 import org.jetbrains.anko.onClick
 import org.jetbrains.anko.startActivity
@@ -25,6 +28,10 @@ import org.jetbrains.anko.startActivity
 class TaskListActivity : BaseListActivity(), ITaskListView {
 
     var presenter: ITaskListPresenter = TaskListPresenter(this)
+
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+    }
 
     override fun beforeDestroy() {
         presenter.dropView()

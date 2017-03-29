@@ -50,7 +50,7 @@ class TaskUtils {
          * задачу выполнена
          */
         fun isDone(task: RealmTask): Boolean {
-            return task.endDate != null;
+            return task.endDate != null && !task.userId.isNullOrEmpty();
         }
 
         /**
