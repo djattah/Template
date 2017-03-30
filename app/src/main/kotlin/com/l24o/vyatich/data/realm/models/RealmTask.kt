@@ -15,12 +15,13 @@ open class RealmTask(
         open var id: String = "",
         open var description: String = "",
         open var typeId: String = "",
+        open var typeName: String = "",
         open var expeditionId: String = "",
         open var startDate: Date? = null,
         open var endDate: Date? = null,
         open var userId: String? = null,
-        open var products: RealmList<RealmProductForTake> = RealmList(),
-        open var isNeedSync: Boolean = false
+        open var products: RealmList<RealmProduct> = RealmList(),
+        open var isFinish: Boolean = false
 ) : RealmObject()
 
 open class RealmTaskType(

@@ -112,21 +112,24 @@ class RealmRepository(private val realm: Realm) : Repository() {
             val list = tasks.map {
                 task ->
                 val products = task.products?.map {
-                    productForTake ->
-                    it.copyToRealm(RealmProductForTake(
-                            productId = productForTake.productId,
-                            count = productForTake.count
+                    product ->
+                    it.copyToRealm(RealmProduct(
+                            id = product.id,
+                            name = product.name,
+                            unit = product.unit,
+                            count = product.count
                     ))
                 }
                 val realmTask = RealmTask(
                         id = task.id,
                         description = task.description,
                         typeId = task.typeId,
+                        typeName = task.typeName,
                         expeditionId = task.expeditionId,
                         startDate = task.startDate,
                         endDate = task.endDate,
                         userId = task.userId,
-                        isNeedSync = false
+                        isFinish = task.isFinish
                 )
                 if (products != null) {
                     realmTask.products.addAll(products)
@@ -161,21 +164,24 @@ class RealmRepository(private val realm: Realm) : Repository() {
     fun updateTask(task: Task) {
         realm.executeTransactionAsync {
             val products = task.products?.map {
-                productForTake ->
-                it.copyToRealm(RealmProductForTake(
-                        productId = productForTake.productId,
-                        count = productForTake.count
+                product ->
+                it.copyToRealm(RealmProduct(
+                        id = product.id,
+                        name = product.name,
+                        unit = product.unit,
+                        count = product.count
                 ))
             }
             val realmTask = RealmTask(
                     id = task.id,
                     description = task.description,
                     typeId = task.typeId,
+                    typeName = task.typeName,
                     expeditionId = task.expeditionId,
                     startDate = task.startDate,
                     endDate = task.endDate,
                     userId = task.userId,
-                    isNeedSync = false
+                    isFinish = task.isFinish
             )
             if (products != null) {
                 realmTask.products.addAll(products)

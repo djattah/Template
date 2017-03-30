@@ -56,23 +56,6 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
         taskRepo = TaskRepository(adapter.create(
                 TaskDataSource::class.java))
         realmRepo = RealmRepository(Realm.getDefaultInstance())
-
-        // грузим типы задач и экспедиции
-        // чтобы делать фильтр по ним
-        val user = realmRepo.fetchUser()
-        taskRepo.getAllData(user.login)
-                .subscribe({
-                    allData ->
-                    realmRepo.clearAllTaskData()
-                    realmRepo.saveTasks(allData.tasks)
-                    realmRepo.saveExpeditions(allData.exps, view)
-                    realmRepo.saveTaskTypes(allData.types, view)
-                    realmRepo.saveProducts(allData.products)
-                    fetchData()
-                }, {
-                    error ->
-                    view.showMessage(error.parsedMessage())
-                })
     }
 
     override fun onViewDetached() {
@@ -104,7 +87,6 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
         view?.setLoadingVisible(true)
 
         fetchData()
-        //subscriptions += realmRep.fetchTasks(showNewTasks, showAllTasks, selectedType, selectedExp)
     }
 
     override fun onTypeWrapperClick() {

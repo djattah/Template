@@ -112,20 +112,7 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
                                     view?.showMessage(error.parsedMessage())
                                 })
 
-                    if (task.products != null)
-                        realmRepo.fetchProducts()
-                                .subscribe({
-                                    var products = arrayListOf<RealmProduct>()
-                                    for (product in it)
-                                        for (take in task.products) {
-                                            if (take.productId == product.id)
-                                                products.add(product)
-                                        }
-                                    view?.fillTaskProductInfo(products)
-                                }, {
-                                    error ->
-                                    view?.showMessage(error.parsedMessage())
-                                })
+                    view?.fillTaskProductInfo(task.products)
                 }, {
                     error ->
                     view?.showMessage(error.parsedMessage())

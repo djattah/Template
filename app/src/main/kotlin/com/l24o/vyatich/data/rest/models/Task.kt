@@ -13,6 +13,8 @@ data class Task(
         val description: String,
         @SerializedName("typeId")
         val typeId: String,
+        @SerializedName("typeName")
+        val typeName: String,
         @SerializedName("expeditionId")
         val expeditionId: String,
         @SerializedName("startDate")
@@ -22,7 +24,9 @@ data class Task(
         @SerializedName("userId")
         val userId: String?,
         @SerializedName("products")
-        val products: List<ProductForTake>?
+        val products: List<Product>?,
+        @SerializedName("isFinish")
+        val isFinish: Boolean
 )
 
 data class TaskType(

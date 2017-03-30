@@ -35,13 +35,13 @@ interface TaskDataSource {
 
     @FormUrlEncoded
     @POST("task/startTask")
-    fun startTask(@Field("taskId") taskId: String): Observable<Task>
+    fun startTask(@Field("taskId") taskId: String, @Field("typeName") typeName: String): Observable<Task>
 
     @FormUrlEncoded
     @POST("task/cancelTask")
-    fun cancelTask(@Field("taskId") taskId: String): Observable<Task>
+    fun cancelTask(@Field("taskId") taskId: String, @Field("typeName") typeName: String): Observable<Task>
 
     @FormUrlEncoded
     @POST("task/endTask")
-    fun endTask(@Field("taskId") taskId: String): Observable<Task>
+    fun endTask(@Field("taskId") taskId: String, @Field("typeName") typeName: String): Observable<Task>
 }

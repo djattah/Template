@@ -54,21 +54,21 @@ class TaskRepository(private val taskDataSource: TaskDataSource) : Repository() 
                 .compose(this.applySchedulers<List<Product>>())
     }
 
-    fun startTask(taskId: String): Observable<Task> {
+    fun startTask(taskId: String, typeName: String): Observable<Task> {
         return taskDataSource
-                .startTask(taskId)
+                .startTask(taskId, typeName)
                 .compose(this.applySchedulers<Task>())
     }
 
-    fun cancelTask(taskId: String): Observable<Task> {
+    fun cancelTask(taskId: String, typeName: String): Observable<Task> {
         return taskDataSource
-                .cancelTask(taskId)
+                .cancelTask(taskId, typeName)
                 .compose(this.applySchedulers<Task>())
     }
 
-    fun endTask(taskId: String): Observable<Task> {
+    fun endTask(taskId: String, typeName: String): Observable<Task> {
         return taskDataSource
-                .endTask(taskId)
+                .endTask(taskId, typeName)
                 .compose(this.applySchedulers<Task>())
     }
 }
