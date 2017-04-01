@@ -30,8 +30,8 @@ class SignInPresenter(view: ISignInView) : RxPresenter<ISignInView>(view), ISign
 
     init {
         val client = OkHttpClient.Builder()
-                .connectTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(15, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
                 .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
                 .addInterceptor(VyatichInterceptor())
                 .build()

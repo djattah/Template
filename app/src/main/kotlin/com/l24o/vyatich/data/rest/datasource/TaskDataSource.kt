@@ -4,6 +4,7 @@ import com.l24o.vyatich.data.rest.models.Expedition
 import com.l24o.vyatich.data.rest.models.Product
 import com.l24o.vyatich.data.rest.models.Task
 import com.l24o.vyatich.data.rest.models.TaskType
+import okhttp3.ResponseBody
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -35,13 +36,25 @@ interface TaskDataSource {
 
     @FormUrlEncoded
     @POST("task/startTask")
-    fun startTask(@Field("taskId") taskId: String, @Field("typeName") typeName: String): Observable<Task>
+    fun startTask(@Field("taskId") taskId: String,
+                  @Field("typeName") typeName: String,
+                  @Field("ident") ident: String): Observable<ResponseBody>
 
     @FormUrlEncoded
     @POST("task/cancelTask")
-    fun cancelTask(@Field("taskId") taskId: String, @Field("typeName") typeName: String): Observable<Task>
+    fun cancelTask(@Field("taskId") taskId: String,
+                   @Field("typeName") typeName: String,
+                   @Field("ident") ident: String): Observable<ResponseBody>
 
     @FormUrlEncoded
-    @POST("task/endTask")
-    fun endTask(@Field("taskId") taskId: String, @Field("typeName") typeName: String): Observable<Task>
+    @POST("task/endStackerTask")
+    fun endStackerTask(@Field("taskId") taskId: String,
+                @Field("typeName") typeName: String,
+                @Field("ident") ident: String): Observable<ResponseBody>
+
+    @FormUrlEncoded
+    @POST("task/endCompositorTask")
+    fun endCompositorTask(@Field("taskId") taskId: String,
+                @Field("typeName") typeName: String,
+                @Field("numberPallets") numberPallets: String): Observable<ResponseBody>
 }

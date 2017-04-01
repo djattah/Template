@@ -25,6 +25,12 @@ import java.util.concurrent.TimeUnit
  */
 class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITaskActivityView>(activityView), ITaskActivityPresenter {
 
+    companion object {
+        private val STACKERCPOMPOSITOR_TASK_TYPE_NAME = "StackerCompositor"
+        private val STACKERSB_TASK_TYPE_NAME = "StackerSB"
+        private val STACKERA_TASK_TYPE_NAME = "StackerA"
+    }
+
     var taskRepo: TaskRepository
     var realmRepo: RealmRepository
 
@@ -50,12 +56,12 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
     }
 
     override fun takeTask() {
-        subscriptions += taskRepo.startTask(task.id)
+        subscriptions += taskRepo.startTask(task.id, task.typeName, task.ident)
                 .subscribe({
                     result ->
                     val user = realmRepo.fetchUser()
                     TaskUtils.startTask(task, user.login)
-                    realmRepo.updateTask(task)
+                    realmRepo.updateTask(task, view)
                     view?.navigateToTasks()
                 }, {
                     error ->
@@ -64,7 +70,7 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
     }
 
     override fun finishTask() {
-        subscriptions += taskRepo.endTask(task.id)
+        /*subscriptions += taskRepo.endTask(task.id)
                 .subscribe({
                     result ->
                     TaskUtils.endTask(task)
@@ -73,15 +79,15 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
                 }, {
                     error ->
                     view?.showMessage(error.parsedMessage())
-                })
+                })*/
     }
 
     override fun cancelTask() {
-        subscriptions += taskRepo.cancelTask(task.id)
+        subscriptions += taskRepo.cancelTask(task.id, task.typeName, task.ident)
                 .subscribe({
                     result ->
                     TaskUtils.cancelTask(task)
-                    realmRepo.updateTask(task)
+                    realmRepo.updateTask(task, view)
                     view?.navigateToTasks()
                 }, {
                     error ->
@@ -122,5 +128,4 @@ class TaskActivityPresenter(activityView: ITaskActivityView) : RxPresenter<ITask
     override fun onViewDetached() {
         super.onViewDetached()
     }
-
 }

@@ -12,7 +12,9 @@ import java.util.*
  */
 open class RealmTask(
         @PrimaryKey
+        open var realmId: Int = 0,
         open var id: String = "",
+        open var ident: String = "",
         open var description: String = "",
         open var typeId: String = "",
         open var typeName: String = "",
@@ -40,6 +42,7 @@ open class RealmExpedition(
 
 open class RealmProduct(
         @PrimaryKey
+        open var realmId: Int = 0,
         open var id: String = "",
         open var name: String = "",
         open var unit: String = "",

@@ -7,6 +7,7 @@ import com.l24o.vyatich.data.rest.models.Task
 import com.l24o.vyatich.data.rest.models.TaskType
 import com.l24o.vyatich.modules.task.ITaskListView
 import com.l24o.vyatich.modules.task.TaskListActivity
+import com.l24o.vyatich.modules.task.taskinfo.activity.ITaskActivityView
 import io.realm.Realm
 import rx.Observable
 import rx.lang.kotlin.toSingletonObservable
@@ -24,18 +25,6 @@ class RealmRepository(private val realm: Realm) : Repository() {
     fun fetchTasks(): Observable<List<RealmTask>> {
         return realm
                 .where(RealmTask::class.java)
-                .findAll()
-                .asObservable()
-                .flatMap {
-                    results ->
-                    Observable.just(realm.copyFromRealm(results))
-                }
-    }
-
-    fun fetchSyncTasks(): Observable<List<RealmTask>> {
-        return realm
-                .where(RealmTask::class.java)
-                .equalTo("isNeedSync", true)
                 .findAll()
                 .asObservable()
                 .flatMap {
@@ -107,13 +96,16 @@ class RealmRepository(private val realm: Realm) : Repository() {
         }
     }
 
-    fun saveTasks(tasks: List<Task>) {
-        realm.executeTransactionAsync{
+    fun saveTasks(tasks: List<Task>, view: ITaskListView?) {
+        realm.executeTransactionAsync({
+            var incTask = 0
+            var incProduct = 0
             val list = tasks.map {
                 task ->
                 val products = task.products?.map {
                     product ->
                     it.copyToRealm(RealmProduct(
+                            realmId = incProduct++,
                             id = product.id,
                             name = product.name,
                             unit = product.unit,
@@ -121,7 +113,9 @@ class RealmRepository(private val realm: Realm) : Repository() {
                     ))
                 }
                 val realmTask = RealmTask(
+                        realmId = incTask++,
                         id = task.id,
+                        ident = task.ident,
                         description = task.description,
                         typeId = task.typeId,
                         typeName = task.typeName,
@@ -137,7 +131,10 @@ class RealmRepository(private val realm: Realm) : Repository() {
                 realmTask
             }
             it.copyToRealmOrUpdate(list)
-        }
+        }, {
+            error ->
+            view?.showMessage("ошибка сохранения-" + error.toString())
+        })
     }
 
     fun saveTaskTypes(taskTypes: List<TaskType>, view: ITaskListView?) {
@@ -155,10 +152,15 @@ class RealmRepository(private val realm: Realm) : Repository() {
         })
     }
 
-    fun updateTask(task: RealmTask) {
-        realm.executeTransactionAsync {
+    fun updateTask(task: RealmTask, view: ITaskActivityView?) {
+        realm.executeTransactionAsync({
+            it ->
             it.copyToRealmOrUpdate(task)
-        }
+        }, {
+        }, {
+            error ->
+            view?.showMessage("ошибка - " + error.message)
+        })
     }
 
     fun updateTask(task: Task) {
@@ -174,6 +176,7 @@ class RealmRepository(private val realm: Realm) : Repository() {
             }
             val realmTask = RealmTask(
                     id = task.id,
+                    ident = task.ident,
                     description = task.description,
                     typeId = task.typeId,
                     typeName = task.typeName,

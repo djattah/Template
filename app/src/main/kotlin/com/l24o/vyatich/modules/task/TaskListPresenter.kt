@@ -111,10 +111,10 @@ class TaskListPresenter(view: ITaskListView) : RxPresenter<ITaskListView>(view),
                 .subscribe({
                     allData ->
                     realmRepo.clearAllTaskData()
-                    realmRepo.saveTasks(allData.tasks)
+                    realmRepo.saveTasks(allData.tasks, view)
                     realmRepo.saveExpeditions(allData.exps, view)
                     realmRepo.saveTaskTypes(allData.types, view)
-                    realmRepo.saveProducts(allData.products)
+                    //realmRepo.saveProducts(allData.products)
                     fetchData()
                     view?.setLoadingVisible(false)
                 }, {

@@ -9,6 +9,8 @@ import java.util.*
 data class Task(
         @SerializedName("id")
         val id: String,
+        @SerializedName("ident")
+        val ident: String = "",
         @SerializedName("description")
         val description: String,
         @SerializedName("typeId")

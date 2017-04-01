@@ -2,6 +2,7 @@ package com.l24o.vyatich.data.rest.repositories
 
 import com.l24o.vyatich.data.rest.datasource.TaskDataSource
 import com.l24o.vyatich.data.rest.models.*
+import okhttp3.ResponseBody
 import rx.Observable
 
 
@@ -54,21 +55,27 @@ class TaskRepository(private val taskDataSource: TaskDataSource) : Repository() 
                 .compose(this.applySchedulers<List<Product>>())
     }
 
-    fun startTask(taskId: String, typeName: String): Observable<Task> {
+    fun startTask(taskId: String, typeName: String, ident: String): Observable<ResponseBody> {
         return taskDataSource
-                .startTask(taskId, typeName)
-                .compose(this.applySchedulers<Task>())
+                .startTask(taskId, typeName, ident)
+                .compose(this.applySchedulers<ResponseBody>())
     }
 
-    fun cancelTask(taskId: String, typeName: String): Observable<Task> {
+    fun cancelTask(taskId: String, typeName: String, ident: String): Observable<ResponseBody> {
         return taskDataSource
-                .cancelTask(taskId, typeName)
-                .compose(this.applySchedulers<Task>())
+                .cancelTask(taskId, typeName, ident)
+                .compose(this.applySchedulers<ResponseBody>())
     }
 
-    fun endTask(taskId: String, typeName: String): Observable<Task> {
+    fun endStackerTask(taskId: String, typeName: String, ident: String): Observable<ResponseBody> {
         return taskDataSource
-                .endTask(taskId, typeName)
-                .compose(this.applySchedulers<Task>())
+                .endStackerTask(taskId, typeName, ident)
+                .compose(this.applySchedulers<ResponseBody>())
+    }
+
+    fun endCompositorTask(taskId: String, typeName: String, numberPallets: String): Observable<ResponseBody> {
+        return taskDataSource
+                .endCompositorTask(taskId, typeName, numberPallets)
+                .compose(this.applySchedulers<ResponseBody>())
     }
 }
