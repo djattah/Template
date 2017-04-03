@@ -41,5 +41,8 @@
 
     <!-- сохранение входных данных -->
     <string name="saving_user_login">userlogin</string>
-    <string name="saving_user_password">userPassword</string>
+
+    <!-- url сервака -->
+    <string name="url_address">urlAddress</string>
+
 </resources>

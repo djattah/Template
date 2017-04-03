@@ -51,34 +51,24 @@ class SignInActivity : MvpActivity(), ISignInView {
     override fun setLoadingVisible(isVisible: Boolean) {
         progressBar.visibility = if (isVisible) View.VISIBLE else View.GONE
         emailEditText.enabled = !isVisible
-        passwordEditText.enabled = !isVisible
         forgotPasswordTextView.enabled = !isVisible
         loginButton.enabled = !isVisible
     }
 
-    override fun saveLoginData(login: String, password: String) {
+    override fun saveLoginData(login: String) {
         val sharedPref = getPreferences(Context.MODE_PRIVATE)
         val editor = sharedPref.edit()
-
         editor.putString(getString(R.string.saving_user_login), login)
-        editor.putString(getString(R.string.saving_user_password), password)
         editor.apply()
     }
 
     private fun initViews() {
-        /*inDebugMode {
-            emailEditText.setText("e0010005517")
-            passwordEditText.setText("16")
-        }*/
-
         val sharedPref = getPreferences(Context.MODE_PRIVATE)
         val defLogin = sharedPref.getString(getString(R.string.saving_user_login), "")
-        val defPassword = sharedPref.getString(getString(R.string.saving_user_password), "")
         emailEditText.setText(defLogin)
-        passwordEditText.setText(defPassword)
 
         loginButton.onClick {
-            presenter.onSignInClick(emailEditText.text.toString(), passwordEditText.text.toString())
+            presenter.onSignInClick(emailEditText.text.toString())
         }
     }
 }

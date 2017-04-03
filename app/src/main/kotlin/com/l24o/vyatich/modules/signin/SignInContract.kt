@@ -7,10 +7,10 @@ import com.l24o.vyatich.common.mvp.IView
 interface ISignInView : IView {
     fun setLoadingVisible(isVisible: Boolean)
     fun navigateToTasks()
-    fun saveLoginData(login: String, password: String)
+    fun saveLoginData(login: String)
 }
 
 interface ISignInPresenter : IPresenter<ISignInView> {
-    fun onSignInClick(login: String, password: String)
+    fun onSignInClick(login: String)
 }
 
